@@ -35,7 +35,7 @@ public class MainView extends VerticalLayout {
         HorizontalLayout loginButtons = new HorizontalLayout();
 
         Button trainerLoginButton = new Button("Trainer Login/Register");
-        trainerLoginButton.setWidth("100%");
+        trainerLoginButton.setWidthFull();
         trainerLoginButton.setHeight("100px");
         trainerLoginButton.getStyle().set("background-color", "#660000");
         trainerLoginButton.getStyle().set("font-size", "40px");
@@ -43,7 +43,7 @@ public class MainView extends VerticalLayout {
         loginButtons.add(trainerLoginButton);
 
         Button userLoginButton = new Button("User Login/Register");
-        userLoginButton.setWidth("100%");
+        userLoginButton.setWidthFull();
         userLoginButton.setHeight("100px");
         userLoginButton.getStyle().set("background-color", "#003366");
         userLoginButton.getStyle().set("font-size", "40px");
@@ -53,8 +53,48 @@ public class MainView extends VerticalLayout {
         loginButtons.add(userLoginButton);
         add(loginButtons);
 
-        FormLayout trainerTeamLayout = getTrainerTeamLayout(openAiClient);
-        add(trainerTeamLayout);
+        /////////////////////////////////////////////////
+
+        FormLayout jeffLayout = talkWithAi(openAiClient);
+        jeffLayout.getStyle().set("margin-top", "16px");
+        jeffLayout.setWidthFull();
+
+        Label jeffLabel = new Label("Meet virtual trainer");
+        jeffLabel.getStyle().set("font-size", "40px");
+        jeffLabel.setHeight("60px");
+        jeffLabel.getStyle().set("margin-top", "20px");
+        jeffLabel.getStyle().set("margin-bottom", "20px");
+        jeffLabel.getStyle().set("text-align", "center");
+
+        FormLayout aiLayout = new FormLayout();
+        aiLayout.add(jeffLabel);
+        aiLayout.setWidthFull();
+        aiLayout.getStyle().set("border", "2px solid black");
+        aiLayout.getStyle().set("padding", "4px");
+
+        FormLayout formLayout = new FormLayout();
+        formLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("100", 1));
+        formLayout.add(aiLayout);
+        formLayout.add(jeffLayout);
+        formLayout.setColspan(jeffLayout, 1);
+        formLayout.setColspan(aiLayout, 1);
+        formLayout.setWidth("40%");
+        formLayout.setHeightFull();
+        /////////////////////////////////////////////////
+
+        Label trainersLabel = new Label("Meet our trainers team");
+        trainersLabel.getStyle().set("font-size", "40px");
+        trainersLabel.setHeight("60px");
+        trainersLabel.getStyle().set("margin-top", "20px");
+        trainersLabel.getStyle().set("margin-bottom", "20px");
+        trainersLabel.getStyle().set("text-align", "center");
+        trainersLabel.setWidthFull();
+
+        VerticalLayout meetTrainers = new VerticalLayout();
+        meetTrainers.add(trainersLabel);
+        meetTrainers.getStyle().set("border", "2px solid black");
+        meetTrainers.getStyle().set("padding", "4px");
+        meetTrainers.setWidthFull();
 
         grid.setColumns("firstName", "lastName", "education");
         grid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.description]]</div>")
@@ -64,46 +104,78 @@ public class MainView extends VerticalLayout {
         grid.getColumnByKey("firstName").setWidth("10%");
         grid.getColumnByKey("lastName").setWidth("10%");
         grid.getColumnByKey("education").setWidth("27%");
-        grid.setWidthFull();
         grid.setItems(trainerService.getTrainers());
-
-
-        add(grid);
-        setWidthFull();
+        grid.getStyle().set("border", "2px solid #CC9900");
+        grid.setWidthFull();
         refresh();
+
+        VerticalLayout trainers = new VerticalLayout();
+        trainers.add(meetTrainers);
+        trainers.add(grid);
+        trainers.getStyle().set("padding", "0px");
+        trainers.getStyle().set("margin-left", "10px");
+        trainers.setHeightFull();
+        trainers.setWidthFull();
+
+        HorizontalLayout aboutUs = new HorizontalLayout();
+        aboutUs.add(formLayout);
+        //aboutUs.add(grid);
+        aboutUs.add(trainers);
+        aboutUs.setWidthFull();
+
+        add(aboutUs);
+        setWidthFull();
     }
 
     public void refresh() {
         grid.setItems(trainerService.getTrainers());
     }
 
-    public FormLayout getTrainerTeamLayout(OpenAiClient openAiClient) {
+    public FormLayout talkWithAi(OpenAiClient openAiClient) {
 
         TextField userInput = new TextField();
         userInput.setPlaceholder("Ask our virtual trainer Jeff");
-        userInput.getStyle().set("padding", "1px");
-        userInput.setWidthFull();
+        userInput.getStyle().set("padding", "2px");
+        userInput.setWidth("180%");
 
-        Button aiButton = new Button("Ask our virtual trainer Jeff");
-        aiButton.setWidth("100%");
-        aiButton.setHeight("50px");
+
+        Button aiButton = new Button("Ask");
+        aiButton.setWidth("20%");
+        aiButton.setHeight(userInput.getHeight());
+        aiButton.getStyle().set("padding", "2px");
+        aiButton.getStyle().set("margin", "2px");
         aiButton.getStyle().set("background-color", "#CC5500");
         aiButton.getStyle().set("font-size", "20px");
         aiButton.getStyle().set("color", "#f2f2ff");
 
+        HorizontalLayout userInputLayout = new HorizontalLayout();
+        userInputLayout.add(userInput);
+        userInputLayout.add(aiButton);
+        userInputLayout.setWidthFull();
 
-        Label label = new Label(openAiClient.getEndpoint(new OpenAiResponseDto("Write day plan")).getText());
 
-        FormLayout formLayout = new FormLayout();
-        formLayout.add(userInput);
-        formLayout.add(aiButton);
-        formLayout.add(label);
-        formLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 1));
-        formLayout.setColspan(userInput, 1);
-        formLayout.setColspan(aiButton, 1);
-        formLayout.getStyle().set("border", "2px solid black");
-        formLayout.setWidthFull();
+        FormLayout conversationLayout = new FormLayout();
+        Label aiLabel = new Label("Jeff response");
+        conversationLayout.add(aiLabel);
+        aiLabel.setHeight("350px");
+        aiButton.addClickListener(event -> {
+           aiLabel.setText(getAiOutput(userInput, openAiClient));
+        });
 
-        return formLayout;
+        conversationLayout.add(userInputLayout);
+
+        conversationLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("100", 1));
+        conversationLayout.setColspan(userInput, 1);
+        conversationLayout.setColspan(aiButton, 1);
+        conversationLayout.getStyle().set("border", "2px solid #CC5500");
+        conversationLayout.getStyle().set("padding", "4px");
+        conversationLayout.setWidthFull();
+        conversationLayout.getStyle().set("background-color", "#F5F5F5");
+
+        return conversationLayout;
+    }
+
+    public String getAiOutput(TextField userInput, OpenAiClient openAiClient) {
+        return openAiClient.getEndpoint(new OpenAiResponseDto(userInput.getValue())).getText();
     }
 }
