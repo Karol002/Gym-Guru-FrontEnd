@@ -22,31 +22,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Route(value = "/gymguru")
 public class MainView extends VerticalLayout {
     @Autowired
-    private TrainerService trainerService;
-    @Autowired
-    public MainView(OpenAiClient openAiClient) {
+    public MainView(OpenAiClient openAiClient, TrainerService trainerService) {
         setId("");
         setWidthFull();
         setHeightFull();
 
         add(getGymImage());
         add(getLoginButtons());
-        add(getAboutUs(openAiClient));
+        add(getAboutUs(openAiClient, trainerService));
     }
 
-    private HorizontalLayout getAboutUs(OpenAiClient openAiClient) {
+    private HorizontalLayout getAboutUs(OpenAiClient openAiClient, TrainerService trainerService) {
         HorizontalLayout aboutUs = new HorizontalLayout();
         aboutUs.add(getAiLayout(openAiClient));
-        aboutUs.add(getTrainersLayout());
+        aboutUs.add(getTrainersLayout(trainerService));
         aboutUs.setWidthFull();
 
         return  aboutUs;
     }
 
-    private VerticalLayout getTrainersLayout() {
+    private VerticalLayout getTrainersLayout(TrainerService trainerService) {
         VerticalLayout trainers = new VerticalLayout();
         trainers.add(getTrainersInfo(getTrainersLabel()));
-        trainers.add(getTrainersGird());
+        trainers.add(getTrainersGird(trainerService));
         trainers.getStyle().set("padding", "0px");
         trainers.getStyle().set("margin-left", "10px");
         trainers.setHeightFull();
@@ -55,7 +53,7 @@ public class MainView extends VerticalLayout {
         return trainers;
     }
 
-    private Grid<Trainer> getTrainersGird() {
+    private Grid<Trainer> getTrainersGird(TrainerService trainerService) {
         Grid<Trainer> trainerGrid = new Grid<>(Trainer.class);
 
         trainerGrid.setColumns("firstName", "lastName");
@@ -72,7 +70,7 @@ public class MainView extends VerticalLayout {
         trainerGrid.setItems(trainerService.getTrainers());
         trainerGrid.getStyle().set("border", "2px solid #CC9900");
         trainerGrid.setWidthFull();
-        refresh(trainerGrid);
+        refresh(trainerGrid, trainerService);
 
         return trainerGrid;
     }
@@ -181,7 +179,7 @@ public class MainView extends VerticalLayout {
         return gymImage;
     }
 
-    private void refresh(Grid<Trainer> trainerGrid) {
+    private void refresh(Grid<Trainer> trainerGrid, TrainerService trainerService) {
         trainerGrid.setItems(trainerService.getTrainers());
     }
 
