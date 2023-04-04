@@ -23,6 +23,6 @@ public class AuthClient {
                 .encode()
                 .toUri();
 
-        return restTemplate.postForObject(url, cregit dentials, String.class);
+        return restTemplate.postForObject(url, credentials, String.class);
     }
 }
