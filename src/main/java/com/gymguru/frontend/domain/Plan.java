@@ -1,4 +1,4 @@
-package com.gymguru.frontend.external.app.domain;
+package com.gymguru.frontend.domain;
 
 import java.util.List;
 

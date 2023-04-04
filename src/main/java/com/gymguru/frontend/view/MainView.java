@@ -1,10 +1,9 @@
-package com.gymguru.frontend;
+package com.gymguru.frontend.view;
 
 import com.gymguru.frontend.external.app.cllient.OpenAiClient;
-import com.gymguru.frontend.external.app.domain.Trainer;
+import com.gymguru.frontend.domain.Trainer;
 import com.gymguru.frontend.service.TrainerService;
-import com.gymguru.frontend.test.OpenAiResponseDto;
-import com.gymguru.frontend.view.LoginView;
+import com.gymguru.frontend.domain.dto.OpenAiMessageDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -22,8 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @PageTitle("Gym-Guru")
 @Route(value = "/gymguru")
 public class MainView extends VerticalLayout {
-    private final TrainerService trainerService = TrainerService.getInstance();
-
+    @Autowired
+    private TrainerService trainerService;
     @Autowired
     public MainView(OpenAiClient openAiClient) {
         setId("");
@@ -59,14 +58,17 @@ public class MainView extends VerticalLayout {
     private Grid<Trainer> getTrainersGird() {
         Grid<Trainer> trainerGrid = new Grid<>(Trainer.class);
 
-        trainerGrid.setColumns("firstName", "lastName", "education");
+        trainerGrid.setColumns("firstName", "lastName");
+        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.education]]</div>")
+                        .withProperty("education", Trainer::getEducation))
+                .setHeader("Education")
+                .setFlexGrow(30);
         trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.description]]</div>")
                         .withProperty("description", Trainer::getDescription))
                 .setHeader("Description")
                 .setFlexGrow(50);
-        trainerGrid.getColumnByKey("firstName").setWidth("7%");
-        trainerGrid.getColumnByKey("lastName").setWidth("7%");
-        trainerGrid.getColumnByKey("education").setWidth("36%");
+        trainerGrid.getColumnByKey("firstName").setWidth("10%");
+        trainerGrid.getColumnByKey("lastName").setWidth("10%");
         trainerGrid.setItems(trainerService.getTrainers());
         trainerGrid.getStyle().set("border", "2px solid #CC9900");
         trainerGrid.setWidthFull();
@@ -148,7 +150,9 @@ public class MainView extends VerticalLayout {
     }
 
     private Button getTrainerLoginButton() {
-        Button trainerLoginButton = new Button("Trainer Login/Register");
+        Button trainerLoginButton = new Button("Create new account", event -> {
+            UI.getCurrent().navigate("gymguru/reqister");
+        });
         trainerLoginButton.setWidthFull();
         trainerLoginButton.setHeight("100px");
         trainerLoginButton.getStyle().set("background-color", "#660000");
@@ -159,11 +163,8 @@ public class MainView extends VerticalLayout {
     }
 
     private Button getUserLoginButton() {
-        Button userLoginButton = new Button("User Login/Register", event -> {
-            LoginView loginView = new LoginView();
-            UI.getCurrent().navigate("gymguru/user/login");
-            UI.getCurrent().getPage().setTitle("Login user");
-            UI.getCurrent().getElement().appendChild(loginView.getElement());
+        Button userLoginButton = new Button("Login to your account", event -> {
+            UI.getCurrent().navigate("gymguru/login");
         });
         userLoginButton.setWidthFull();
         userLoginButton.setHeight("100px");
@@ -248,6 +249,6 @@ public class MainView extends VerticalLayout {
     }
 
     public String getAiOutput(TextField userInput, OpenAiClient openAiClient) {
-        return openAiClient.getEndpoint(new OpenAiResponseDto(userInput.getValue())).getText();
+        return openAiClient.getEndpoint(new OpenAiMessageDto(userInput.getValue())).getContent();
     }
 }

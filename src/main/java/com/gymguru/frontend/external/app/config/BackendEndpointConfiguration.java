@@ -10,6 +10,9 @@ public class BackendEndpointConfiguration {
     @Value("${backend.server.endpoint}")
     private String endpoint;
 
+    @Value("${backend.endpoint.login}")
+    private String login;
+
     @Value("${backend.endpoint.exercises}")
     private String exercise;
 

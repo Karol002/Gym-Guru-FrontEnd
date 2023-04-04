@@ -1,11 +1,11 @@
-package com.gymguru.frontend.external.app.domain;
+package com.gymguru.frontend.domain.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @AllArgsConstructor
-public class User {
+public class UserDto {
     private Long id;
     private String email;
     private String password;

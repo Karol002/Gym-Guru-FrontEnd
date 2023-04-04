@@ -1,4 +1,4 @@
-package com.gymguru.frontend.external.app.domain.dto;
+package com.gymguru.frontend.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
