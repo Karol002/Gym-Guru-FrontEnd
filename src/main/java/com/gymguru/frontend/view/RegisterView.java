@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Route(value = "/gymguru/reqister")
 @PageTitle("Register")
 public class RegisterView extends VerticalLayout {
-    
+
     @Autowired
     public RegisterView(UserService userService, TrainerService trainerService) {
         setAlignItems(Alignment.CENTER);
@@ -62,7 +62,6 @@ public class RegisterView extends VerticalLayout {
         descriptionField.setLabel("Description");
         descriptionField.setPlaceholder("Enter your description");
         descriptionField.setRequired(true);
-        System.out.println(descriptionField.getHeight());
         descriptionField.setVisible(false);
         descriptionField.setHeight("6em");
         descriptionField.setWidth("400px");
@@ -107,6 +106,7 @@ public class RegisterView extends VerticalLayout {
     private Button getRegisterButton(Label errorLabel, Select<CredentialType> type, TextField firstNameField, TextField lastNameField,
                                      TextField emailField, PasswordField passwordField, TextArea descriptionAre, TextArea educationArea,
                                      UserService userService, TrainerService trainerService) {
+
         Button registerButton = new Button("Register");
         registerButton.getStyle().set("background-color", "#007bff");
         registerButton.getStyle().set("color", "#fff");
@@ -121,7 +121,7 @@ public class RegisterView extends VerticalLayout {
                 if (createAccount(type, firstNameField, lastNameField, emailField, passwordField, descriptionAre, educationArea, userService,trainerService)) {
                     Notification.show("Account created!");
                     UI.getCurrent().navigate(LoginView.class);
-                } else Notification.show("Something gone wrong!");
+                } else Notification.show("Error creating account!");
             } else {
                 errorLabel.setText("Please fill in all fields");
             }
@@ -130,7 +130,7 @@ public class RegisterView extends VerticalLayout {
         return registerButton;
     }
 
-    public boolean createAccount(Select<CredentialType> type, TextField firstNameField, TextField lastNameField, TextField emailField,
+    private boolean createAccount(Select<CredentialType> type, TextField firstNameField, TextField lastNameField, TextField emailField,
                                  PasswordField passwordField, TextArea descriptionAre, TextArea educationArea, UserService userService, TrainerService trainerService)  {
         if (type.getValue() == CredentialType.User) {
             return (userService.createUser(emailField.getValue(), passwordField.getValue(), firstNameField.getValue(), lastNameField.getValue()));
@@ -139,7 +139,7 @@ public class RegisterView extends VerticalLayout {
                     lastNameField.getValue(), educationArea.getValue(), descriptionAre.getValue()));
         }
     }
-    
+
     private boolean checkData(Select<CredentialType> type, TextField firstNameField, TextField lastNameField, TextField emailField, 
                               PasswordField passwordField, TextArea descriptionAre, TextArea educationArea) {
         if (type.getValue() == CredentialType.User) {
@@ -151,7 +151,7 @@ public class RegisterView extends VerticalLayout {
         if (type.getValue() == CredentialType.Trainer) {
             if (firstNameField.getValue().isEmpty() || lastNameField.getValue().isEmpty()
                     || emailField.getValue().isEmpty() || passwordField.getValue().isEmpty()
-                    || type.isEmpty() || descriptionAre.isEmpty() 
+                    || type.isEmpty() || descriptionAre.isEmpty()
                     || educationArea.isEmpty()) return false;
         }
         
@@ -194,11 +194,11 @@ public class RegisterView extends VerticalLayout {
 
         type.addValueChangeListener(event -> {
             if (event.getValue() == CredentialType.Trainer) {
-                educationField.setVisible(true);
-                descriptionField.setVisible(true);
+                educationField.setVisible(true); educationField.setRequired(true);
+                descriptionField.setVisible(true); descriptionField.setRequired(true);
             } else if (event.getValue() == CredentialType.User) {
-                educationField.setVisible(false);
-                descriptionField.setVisible(false);
+                educationField.setVisible(false); educationField.setRequired(false);
+                descriptionField.setVisible(false); descriptionField.setRequired(false);
             }
         });
 

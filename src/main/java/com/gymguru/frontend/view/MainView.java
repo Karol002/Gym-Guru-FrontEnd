@@ -1,7 +1,7 @@
 package com.gymguru.frontend.view;
 
+import com.gymguru.frontend.domain.dto.TrainerDto;
 import com.gymguru.frontend.external.app.cllient.OpenAiClient;
-import com.gymguru.frontend.domain.Trainer;
 import com.gymguru.frontend.service.TrainerService;
 import com.gymguru.frontend.domain.dto.OpenAiMessageDto;
 import com.vaadin.flow.component.UI;
@@ -26,10 +26,11 @@ public class MainView extends VerticalLayout {
         setId("");
         setWidthFull();
         setHeightFull();
+        Image image = getGymImage();
+        HorizontalLayout loginButtons = getLoginButtons();
+        HorizontalLayout aboutUs = getAboutUs(openAiClient, trainerService);
 
-        add(getGymImage());
-        add(getLoginButtons());
-        add(getAboutUs(openAiClient, trainerService));
+        add(image, loginButtons, aboutUs);
     }
 
     private HorizontalLayout getAboutUs(OpenAiClient openAiClient, TrainerService trainerService) {
@@ -53,16 +54,16 @@ public class MainView extends VerticalLayout {
         return trainers;
     }
 
-    private Grid<Trainer> getTrainersGird(TrainerService trainerService) {
-        Grid<Trainer> trainerGrid = new Grid<>(Trainer.class);
+    private Grid<TrainerDto> getTrainersGird(TrainerService trainerService) {
+        Grid<TrainerDto> trainerGrid = new Grid<>(TrainerDto.class);
 
         trainerGrid.setColumns("firstName", "lastName");
-        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.education]]</div>")
-                        .withProperty("education", Trainer::getEducation))
+        trainerGrid.addColumn(TemplateRenderer.<TrainerDto>of("<div style='white-space: normal'>[[item.education]]</div>")
+                        .withProperty("education", TrainerDto::getEducation))
                 .setHeader("Education")
                 .setFlexGrow(30);
-        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.description]]</div>")
-                        .withProperty("description", Trainer::getDescription))
+        trainerGrid.addColumn(TemplateRenderer.<TrainerDto>of("<div style='white-space: normal'>[[item.description]]</div>")
+                        .withProperty("description", TrainerDto::getDescription))
                 .setHeader("Description")
                 .setFlexGrow(50);
         trainerGrid.getColumnByKey("firstName").setWidth("10%");
@@ -179,7 +180,7 @@ public class MainView extends VerticalLayout {
         return gymImage;
     }
 
-    private void refresh(Grid<Trainer> trainerGrid, TrainerService trainerService) {
+    private void refresh(Grid<TrainerDto> trainerGrid, TrainerService trainerService) {
         trainerGrid.setItems(trainerService.getTrainers());
     }
 

@@ -1,7 +1,5 @@
 package com.gymguru.frontend.view;
 
-import com.gymguru.frontend.external.app.cllient.AuthClient;
-import com.gymguru.frontend.external.app.cllient.CredentialDto;
 import com.gymguru.frontend.service.AuthService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -46,6 +44,7 @@ public class LoginView extends VerticalLayout {
         registerButton.setWidth("400px");
         registerButton.setMaxWidth("100%");
         registerButton.setHeight("60px");
+
         registerButton.addClickListener(event -> {
             Notification.show("Redirecting to registration page...");
             UI.getCurrent().navigate("gymguru/reqister");
@@ -65,8 +64,7 @@ public class LoginView extends VerticalLayout {
         loginButton.setHeight("60px");
 
         loginButton.addClickListener(event -> {
-            boolean signInSuccess = authService.signIn(emailField.getValue(), passwordField.getValue());
-            if (signInSuccess) Notification.show("Successfully logged in!");
+            if (authService.signIn(emailField.getValue(), passwordField.getValue())) Notification.show("Successfully logged in!");
             else errorLabel.setText("Invalid username or password");
         });
 
