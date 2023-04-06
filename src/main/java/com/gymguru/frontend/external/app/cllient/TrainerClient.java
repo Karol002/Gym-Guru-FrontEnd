@@ -11,10 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +20,7 @@ public class TrainerClient {
     private final RestTemplate restTemplate;
     private final BackendEndpointConfiguration backendEndpointConfiguration;
 
-    public HttpStatus createTrainer(TrainerAccount trainer) throws ResourceAccessException {
+    public HttpStatus createTrainerAccount(TrainerAccount trainer) throws ResourceAccessException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendEndpointConfiguration.getEndpoint() + backendEndpointConfiguration.getTrainer())
                 .build()
                 .encode()

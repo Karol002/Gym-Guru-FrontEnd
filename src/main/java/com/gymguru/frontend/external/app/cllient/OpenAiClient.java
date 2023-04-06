@@ -15,12 +15,12 @@ public class OpenAiClient {
     private final RestTemplate restTemplate;
     private final BackendEndpointConfiguration backendEndpointConfiguration;
 
-    public OpenAiMessageDto getEndpoint(OpenAiMessageDto openAiMessageDto) {
+    public String getResponse(OpenAiMessageDto openAiMessageDto) {
         URI url = UriComponentsBuilder.fromHttpUrl(backendEndpointConfiguration.getEndpoint() + backendEndpointConfiguration.getOpenai())
                 .build()
                 .encode()
                 .toUri();
 
-        return restTemplate.postForObject(url, openAiMessageDto, OpenAiMessageDto.class);
+        return restTemplate.postForObject(url, openAiMessageDto, OpenAiMessageDto.class).getContent();
     }
 }

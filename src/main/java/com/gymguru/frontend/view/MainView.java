@@ -1,9 +1,8 @@
 package com.gymguru.frontend.view;
 
 import com.gymguru.frontend.domain.dto.TrainerDto;
-import com.gymguru.frontend.external.app.cllient.OpenAiClient;
+import com.gymguru.frontend.service.OpenAiService;
 import com.gymguru.frontend.service.TrainerService;
-import com.gymguru.frontend.domain.dto.OpenAiMessageDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -21,31 +20,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 @PageTitle("Gym-Guru")
 @Route(value = "/gymguru")
 public class MainView extends VerticalLayout {
+    private final OpenAiService openAiService;
+    private final TrainerService trainerService;
+    private final Image image;
+    private final HorizontalLayout loginButtons;
+    private final HorizontalLayout aboutUs;
+
     @Autowired
-    public MainView(OpenAiClient openAiClient, TrainerService trainerService) {
+    public MainView(OpenAiService openAiService, TrainerService trainerService) {
+        this.openAiService = openAiService;
+        this.trainerService = trainerService;
+
         setId("");
         setWidthFull();
         setHeightFull();
-        Image image = getGymImage();
-        HorizontalLayout loginButtons = getLoginButtons();
-        HorizontalLayout aboutUs = getAboutUs(openAiClient, trainerService);
+        image = getGymImage();
+        loginButtons = getLoginButtons();
+        aboutUs = getAboutUs();
 
         add(image, loginButtons, aboutUs);
     }
 
-    private HorizontalLayout getAboutUs(OpenAiClient openAiClient, TrainerService trainerService) {
+    private HorizontalLayout getAboutUs() {
         HorizontalLayout aboutUs = new HorizontalLayout();
-        aboutUs.add(getAiLayout(openAiClient));
-        aboutUs.add(getTrainersLayout(trainerService));
+        aboutUs.add(getAiLayout());
+        aboutUs.add(getTrainersLayout());
         aboutUs.setWidthFull();
 
         return  aboutUs;
     }
 
-    private VerticalLayout getTrainersLayout(TrainerService trainerService) {
+    private VerticalLayout getTrainersLayout() {
         VerticalLayout trainers = new VerticalLayout();
         trainers.add(getTrainersInfo(getTrainersLabel()));
-        trainers.add(getTrainersGird(trainerService));
+        trainers.add(getTrainersGird());
         trainers.getStyle().set("padding", "0px");
         trainers.getStyle().set("margin-left", "10px");
         trainers.setHeightFull();
@@ -54,7 +62,7 @@ public class MainView extends VerticalLayout {
         return trainers;
     }
 
-    private Grid<TrainerDto> getTrainersGird(TrainerService trainerService) {
+    private Grid<TrainerDto> getTrainersGird() {
         Grid<TrainerDto> trainerGrid = new Grid<>(TrainerDto.class);
 
         trainerGrid.setColumns("firstName", "lastName");
@@ -98,8 +106,8 @@ public class MainView extends VerticalLayout {
         return trainersLabel;
     }
 
-    private FormLayout getAiLayout(OpenAiClient openAiClient) {
-        FormLayout aiResponseLayout = talkWithAi(openAiClient);
+    private FormLayout getAiLayout() {
+        FormLayout aiResponseLayout = talkWithAi();
         FormLayout aiInfoLayout = getAiInfoLayout(getAiLabel());
 
         return joinAiLayouts(aiResponseLayout, aiInfoLayout);
@@ -184,11 +192,11 @@ public class MainView extends VerticalLayout {
         trainerGrid.setItems(trainerService.getTrainers());
     }
 
-    private FormLayout talkWithAi(OpenAiClient openAiClient) {
+    private FormLayout talkWithAi() {
 
         TextField userInput = getUserInput();
         Label aiResponseLabel = getAiResponseLabel();
-        Button sendButton = getSendButton(userInput.getHeight(), aiResponseLabel, userInput, openAiClient);
+        Button sendButton = getSendButton(userInput.getHeight(), aiResponseLabel, userInput);
         HorizontalLayout sendLayout = getSendLayout(userInput, sendButton);
 
         FormLayout conversationLayout = new FormLayout();
@@ -221,7 +229,7 @@ public class MainView extends VerticalLayout {
         return aiLabel;
     }
 
-    private Button getSendButton(String height, Label aiLabel, TextField userInput, OpenAiClient openAiClient) {
+    private Button getSendButton(String height, Label aiLabel, TextField userInput) {
         Button sendButton = new Button("Ask");
         sendButton.setWidth("20%");
         sendButton.setHeight(height);
@@ -232,7 +240,7 @@ public class MainView extends VerticalLayout {
         sendButton.getStyle().set("color", "#f2f2ff");
 
         sendButton.addClickListener(event -> {
-            aiLabel.setText(getAiOutput(userInput, openAiClient));
+            aiLabel.setText(getAiOutput(userInput));
         });
 
         return sendButton;
@@ -247,7 +255,7 @@ public class MainView extends VerticalLayout {
         return userInput;
     }
 
-    public String getAiOutput(TextField userInput, OpenAiClient openAiClient) {
-        return openAiClient.getEndpoint(new OpenAiMessageDto(userInput.getValue())).getContent();
+    public String getAiOutput(TextField userInput) {
+        return openAiService.getAiResponse(userInput.getValue());
     }
 }

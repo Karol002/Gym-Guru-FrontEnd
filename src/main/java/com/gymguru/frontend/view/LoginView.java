@@ -1,5 +1,6 @@
 package com.gymguru.frontend.view;
 
+import com.gymguru.frontend.external.app.cllient.AuthClient;
 import com.gymguru.frontend.service.AuthService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -17,20 +18,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Route(value = "/gymguru/login")
 @PageTitle("Login user")
 public class LoginView extends VerticalLayout {
+    private final AuthService authService;
+    private final H1 title;
+    private final Label errorLabel;
+    private final TextField emailField;
+    private final PasswordField passwordField;
+    private final Button loginButton;
+    private final Button registerButton;
 
     @Autowired
     public LoginView(AuthService authService) {
         setAlignItems(FlexComponent.Alignment.CENTER);
         setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
 
-        H1 title = new H1("Please log in to your account");
-        Label errorLabel = getErrorLabel();
+        this.authService = authService;
+        title = new H1("Please log in to your account");
+        errorLabel = getErrorLabel();
 
-        TextField emailField = getEmailField();
-        PasswordField passwordField = getPasswordField();
+        emailField = getEmailField();
+        passwordField = getPasswordField();
 
-        Button loginButton = getLoginButton(emailField, passwordField, errorLabel, authService);
-        Button registerButton = getRegisterButton();
+        loginButton = getLoginButton();
+        registerButton = getRegisterButton();
 
         add(title, errorLabel, emailField, passwordField, loginButton, registerButton);
     }
@@ -53,7 +62,7 @@ public class LoginView extends VerticalLayout {
         return registerButton;
     }
 
-    private Button getLoginButton(TextField emailField, PasswordField passwordField, Label errorLabel, AuthService authService) {
+    private Button getLoginButton() {
         Button loginButton = new Button("Log in");
         loginButton.getStyle().set("background-color", "#007bff");
         loginButton.getStyle().set("color", "#fff");
@@ -64,7 +73,10 @@ public class LoginView extends VerticalLayout {
         loginButton.setHeight("60px");
 
         loginButton.addClickListener(event -> {
-            if (authService.signIn(emailField.getValue(), passwordField.getValue())) Notification.show("Successfully logged in!");
+            if (authService.signIn(emailField.getValue(), passwordField.getValue())) {
+                Notification.show("Successfully logged in!");
+                UI.getCurrent().navigate("gymguru/panel/user");
+            }
             else errorLabel.setText("Invalid username or password");
         });
 

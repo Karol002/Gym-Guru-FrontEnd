@@ -10,8 +10,8 @@ public class TrainerAccount {
     private final String password;
     private final String firstName;
     private final String lastName;
-    private final String description;
     private final String education;
+    private final String description;
 }
 
    /* public static class TrainerAccountBuilder {

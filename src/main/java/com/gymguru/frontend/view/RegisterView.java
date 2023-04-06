@@ -20,32 +20,47 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Route(value = "/gymguru/reqister")
 @PageTitle("Register")
 public class RegisterView extends VerticalLayout {
+    private final UserService userService;
+    private final TrainerService trainerService;
+    private final H1 title;
+    private final Label errorLabel;
+    private final TextField emailField;
+    private final PasswordField passwordField;
+    private final TextField firstNameField;
+    private final TextField lastNameField;
+    private final TextArea educationArea;
+    private final TextArea descriptionArea;
+    private final Select<CredentialType> type;
+    private final Button registerButton;
+    private final Button loginButton;
 
     @Autowired
     public RegisterView(UserService userService, TrainerService trainerService) {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
-        H1 title = new H1("Create a new account");
-        Label errorLabel = getErrorLabel();
+        this.trainerService = trainerService;
+        this.userService = userService;
 
-        TextField emailField = getEmailField();
-        PasswordField passwordField = getPasswordField();
-        TextField firstNameField = getFirstNameField();
-        TextField lastNameField = getLastNameField();
+        title = new H1("Create a new account");
+        errorLabel = getErrorLabel();
 
-        TextArea educationField = getEducationField();
-        TextArea descriptionField = getDescriptionField();
-        Select<CredentialType> type = getAccountTypeSelect(educationField, descriptionField);
+        emailField = getEmailField();
+        passwordField = getPasswordField();
+        firstNameField = getFirstNameField();
+        lastNameField = getLastNameField();
 
-        Button registerButton = getRegisterButton(errorLabel, type, firstNameField, lastNameField, emailField,
-                passwordField, educationField, descriptionField, userService, trainerService);
-        Button loginButton = getLoginButton();
+        educationArea = getEducationArea();
+        descriptionArea = getDescriptionArea();
+        type = getAccountTypeSelect();
 
-        add(title, errorLabel, type,  emailField, passwordField, firstNameField, lastNameField, educationField, descriptionField, registerButton, loginButton);
+        registerButton = getRegisterButton();
+        loginButton = getLoginButton();
+
+        add(title, errorLabel, type,  emailField, passwordField, firstNameField, lastNameField, educationArea, descriptionArea, registerButton, loginButton);
     }
 
-    private TextArea getEducationField() {
+    private TextArea getEducationArea() {
         TextArea educationField = new TextArea();
         educationField.setLabel("Education");
         educationField.setPlaceholder("Enter your education");
@@ -57,7 +72,7 @@ public class RegisterView extends VerticalLayout {
         return educationField;
     }
 
-    private TextArea getDescriptionField() {
+    private TextArea getDescriptionArea() {
         TextArea descriptionField = new TextArea();
         descriptionField.setLabel("Description");
         descriptionField.setPlaceholder("Enter your description");
@@ -103,9 +118,7 @@ public class RegisterView extends VerticalLayout {
         return passwordField;
     }
 
-    private Button getRegisterButton(Label errorLabel, Select<CredentialType> type, TextField firstNameField, TextField lastNameField,
-                                     TextField emailField, PasswordField passwordField, TextArea descriptionAre, TextArea educationArea,
-                                     UserService userService, TrainerService trainerService) {
+    private Button getRegisterButton() {
 
         Button registerButton = new Button("Register");
         registerButton.getStyle().set("background-color", "#007bff");
@@ -117,8 +130,8 @@ public class RegisterView extends VerticalLayout {
         registerButton.setHeight("60px");
 
         registerButton.addClickListener(event -> {
-            if (checkData(type, firstNameField, lastNameField, emailField, passwordField, descriptionAre, educationArea)) {
-                if (createAccount(type, firstNameField, lastNameField, emailField, passwordField, descriptionAre, educationArea, userService,trainerService)) {
+            if (validateData()) {
+                if (createAccount()) {
                     Notification.show("Account created!");
                     UI.getCurrent().navigate(LoginView.class);
                 } else Notification.show("Error creating account!");
@@ -130,31 +143,30 @@ public class RegisterView extends VerticalLayout {
         return registerButton;
     }
 
-    private boolean createAccount(Select<CredentialType> type, TextField firstNameField, TextField lastNameField, TextField emailField,
-                                 PasswordField passwordField, TextArea descriptionAre, TextArea educationArea, UserService userService, TrainerService trainerService)  {
+    private boolean createAccount()  {
         if (type.getValue() == CredentialType.User) {
-            return (userService.createUser(emailField.getValue(), passwordField.getValue(), firstNameField.getValue(), lastNameField.getValue()));
+            return (userService.createUser(emailField.getValue(), passwordField.getValue(),
+                    firstNameField.getValue(), lastNameField.getValue()));
         } else {
             return (trainerService.createTrainer(emailField.getValue(), passwordField.getValue(), firstNameField.getValue(),
-                    lastNameField.getValue(), educationArea.getValue(), descriptionAre.getValue()));
+                    lastNameField.getValue(), educationArea.getValue(), descriptionArea.getValue()));
         }
     }
 
-    private boolean checkData(Select<CredentialType> type, TextField firstNameField, TextField lastNameField, TextField emailField, 
-                              PasswordField passwordField, TextArea descriptionAre, TextArea educationArea) {
+    private boolean validateData() {
+        if (type.isEmpty()) return false;
+
         if (type.getValue() == CredentialType.User) {
             if (firstNameField.getValue().isEmpty() || lastNameField.getValue().isEmpty()
-                    || emailField.getValue().isEmpty() || passwordField.getValue().isEmpty()
-                    || type.isEmpty()) return false;
+                    || emailField.getValue().isEmpty() || passwordField.getValue().isEmpty()) return false;
         }
 
         if (type.getValue() == CredentialType.Trainer) {
             if (firstNameField.getValue().isEmpty() || lastNameField.getValue().isEmpty()
                     || emailField.getValue().isEmpty() || passwordField.getValue().isEmpty()
-                    || type.isEmpty() || descriptionAre.isEmpty()
-                    || educationArea.isEmpty()) return false;
+                    || type.isEmpty() || descriptionArea.isEmpty()) return false;
         }
-        
+
         return true;
     }
 
@@ -183,7 +195,7 @@ public class RegisterView extends VerticalLayout {
         return errorLabel;
     }
 
-    private Select<CredentialType> getAccountTypeSelect(TextArea educationField, TextArea descriptionField) {
+    private Select<CredentialType> getAccountTypeSelect() {
         Select<CredentialType> type = new Select<>();
         type.setItems(CredentialType.values());
         type.setLabel("Account type:");
@@ -194,11 +206,11 @@ public class RegisterView extends VerticalLayout {
 
         type.addValueChangeListener(event -> {
             if (event.getValue() == CredentialType.Trainer) {
-                educationField.setVisible(true); educationField.setRequired(true);
-                descriptionField.setVisible(true); descriptionField.setRequired(true);
+                educationArea.setVisible(true); educationArea.setRequired(true);
+                descriptionArea.setVisible(true); descriptionArea.setRequired(true);
             } else if (event.getValue() == CredentialType.User) {
-                educationField.setVisible(false); educationField.setRequired(false);
-                descriptionField.setVisible(false); descriptionField.setRequired(false);
+                educationArea.setVisible(false); educationArea.setRequired(false);
+                descriptionArea.setVisible(false); descriptionArea.setRequired(false);
             }
         });
 
