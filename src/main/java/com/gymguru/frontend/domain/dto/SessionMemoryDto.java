@@ -1,13 +1,15 @@
 package com.gymguru.frontend.domain.dto;
 
+import com.gymguru.frontend.domain.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class MealDto {
+public class SessionMemoryDto {
+    private String token;
+    private Role role;
+    private String email;
     private Long id;
-    private String name;
-    private String cookInstruction;
-    private Long planId;
+
 }

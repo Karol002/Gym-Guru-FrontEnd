@@ -1,9 +1,7 @@
 package com.gymguru.frontend.view;
 
 import com.gymguru.frontend.service.*;
-import com.gymguru.frontend.view.user.UserAccountView;
-import com.gymguru.frontend.view.user.UserBuyView;
-import com.gymguru.frontend.view.user.UserPlanView;
+import com.gymguru.frontend.view.trainer.TrainerSubscriptionsView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
@@ -15,12 +13,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "/gymguru/panel/user")
-@PageTitle("User Panel")
-public class UserView extends AppLayout {
+@Route(value = "/gymguru/panel/trainer")
+@PageTitle("Trainer Panel")
+public class TrainerView extends AppLayout {
     private final OpenAiService openAiService;
     private final TrainerService trainerService;
-    private final UserService userService;
     private final AuthService authService;
     private final SubscriptionService subscriptionService;
     private final PlanService planService;
@@ -28,18 +25,17 @@ public class UserView extends AppLayout {
     private final Tabs tabs;
 
     @Autowired
-    public UserView(OpenAiService openAiService, TrainerService trainerService, UserService userService, AuthService authService, SubscriptionService subscriptionService, PlanService planService) {
+    public TrainerView(OpenAiService openAiService, TrainerService trainerService, AuthService authService, SubscriptionService subscriptionService, PlanService planService) {
         this.openAiService = openAiService;
         this.trainerService = trainerService;
-        this.userService = userService;
         this.authService = authService;
         this.subscriptionService = subscriptionService;
         this.planService = planService;
 
-        title = new H1("Welcome in GYM-GURU user Panel");
+        title = new H1("Welcome in GYM-GURU trainer Panel");
         title.setWidthFull();
         title.getStyle().set("text-align", "center"); // wyc
-        setPrimarySection(Section.DRAWER);
+        setPrimarySection(AppLayout.Section.DRAWER);
         tabs = getTabs();
 
         addToNavbar(title);
@@ -59,9 +55,9 @@ public class UserView extends AppLayout {
     private Tabs getTabs() {
         Tabs tabs = new Tabs(
                 new Tab("Strona główna"),
-                new Tab("Mój plan treningowy"),
-                new Tab("Znajdź swojego trenera"),
-                new Tab("Informacje o koncie"),
+                new Tab("Stwórz plan"),
+                new Tab("Moi subskrybenci"),
+                new Tab("Moje dane"),
                 new Tab("Zmień hasło"),
                 new Tab("Log out")
         );
@@ -79,38 +75,37 @@ public class UserView extends AppLayout {
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Log out")) {
-                authService.logOut();
+            if (selectedTab.getLabel().equals("Stwórz plan")) {
+                //setContent(new UserPlanView(subscriptionService, planService));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Mój plan treningowy")) {
-                setContent(new UserPlanView(subscriptionService, planService));
+            if (selectedTab.getLabel().equals("Moi subskrybenci")) {
+                setContent(new TrainerSubscriptionsView(subscriptionService));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Informacje o koncie")) {
-                setContent(new UserAccountView(userService, subscriptionService));
+            if (selectedTab.getLabel().equals("Moje dane")) {
+                //setContent(new UserAccountView(userService, subscriptionService));
             }
         });
-
-        tabs.addSelectedChangeListener(event -> {
-            Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Znajdź swojego trenera")) {
-                setContent(new UserBuyView(trainerService, subscriptionService));
-            }
-        });
-
 
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("Zmień hasło")) {
                 setContent(new ChangePaasswordView(authService));
+            }
+        });
+
+        tabs.addSelectedChangeListener(event -> {
+            Tab selectedTab = event.getSelectedTab();
+            if (selectedTab.getLabel().equals("Log out")) {
+                authService.logOut();
             }
         });
 

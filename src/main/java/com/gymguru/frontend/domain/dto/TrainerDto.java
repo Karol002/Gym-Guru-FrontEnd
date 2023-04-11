@@ -3,9 +3,12 @@ package com.gymguru.frontend.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.gymguru.frontend.domain.Specialization;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Getter
 @AllArgsConstructor
@@ -27,4 +30,8 @@ public class TrainerDto {
     private String description;
     @JsonProperty("education")
     private String education;
+    @JsonProperty("monthPrice")
+    private BigDecimal monthPrice;
+    @JsonProperty("specialization")
+    private Specialization specialization;
 }

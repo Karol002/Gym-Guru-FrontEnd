@@ -1,6 +1,7 @@
 package com.gymguru.frontend.view;
 
-import com.gymguru.frontend.domain.dto.CredentialType;
+import com.gymguru.frontend.domain.CredentialType;
+import com.gymguru.frontend.domain.Specialization;
 import com.gymguru.frontend.service.TrainerService;
 import com.gymguru.frontend.service.UserService;
 import com.vaadin.flow.component.button.Button;
@@ -10,6 +11,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
@@ -31,6 +33,8 @@ public class RegisterView extends VerticalLayout {
     private final TextArea educationArea;
     private final TextArea descriptionArea;
     private final Select<CredentialType> type;
+    private final Select<Specialization> specializationSelect;
+    private final NumberField priceField;
     private final Button registerButton;
     private final Button loginButton;
 
@@ -53,11 +57,13 @@ public class RegisterView extends VerticalLayout {
         educationArea = getEducationArea();
         descriptionArea = getDescriptionArea();
         type = getAccountTypeSelect();
+        specializationSelect = getSpecializationSelect();
+        priceField = getPriceField();
 
         registerButton = getRegisterButton();
         loginButton = getLoginButton();
 
-        add(title, errorLabel, type,  emailField, passwordField, firstNameField, lastNameField, educationArea, descriptionArea, registerButton, loginButton);
+        add(title, errorLabel, type, emailField, passwordField, specializationSelect, firstNameField, lastNameField, priceField, educationArea, descriptionArea, registerButton, loginButton);
     }
 
     private TextArea getEducationArea() {
@@ -149,7 +155,8 @@ public class RegisterView extends VerticalLayout {
                     firstNameField.getValue(), lastNameField.getValue()));
         } else {
             return (trainerService.createTrainer(emailField.getValue(), passwordField.getValue(), firstNameField.getValue(),
-                    lastNameField.getValue(), educationArea.getValue(), descriptionArea.getValue()));
+                    lastNameField.getValue(), educationArea.getValue(), descriptionArea.getValue(),
+                    priceField.getValue(), specializationSelect.getValue()));
         }
     }
 
@@ -164,7 +171,8 @@ public class RegisterView extends VerticalLayout {
         if (type.getValue() == CredentialType.Trainer) {
             if (firstNameField.getValue().isEmpty() || lastNameField.getValue().isEmpty()
                     || emailField.getValue().isEmpty() || passwordField.getValue().isEmpty()
-                    || type.isEmpty() || descriptionArea.isEmpty()) return false;
+                    || type.isEmpty() || descriptionArea.isEmpty() || priceField.isEmpty()
+                    || specializationSelect.isEmpty() || educationArea.isEmpty()) return false;
         }
 
         return true;
@@ -200,7 +208,6 @@ public class RegisterView extends VerticalLayout {
         type.setItems(CredentialType.values());
         type.setLabel("Account type:");
         type.setPlaceholder("Your role");
-        type.setRequiredIndicatorVisible(true);
         type.setWidth("400px");
         type.setMaxWidth("100%");
 
@@ -208,11 +215,27 @@ public class RegisterView extends VerticalLayout {
             if (event.getValue() == CredentialType.Trainer) {
                 educationArea.setVisible(true); educationArea.setRequired(true);
                 descriptionArea.setVisible(true); descriptionArea.setRequired(true);
+                specializationSelect.setVisible(true); specializationSelect.setRequiredIndicatorVisible(true);
+                priceField.setVisible(true); priceField.setRequiredIndicatorVisible(true);
             } else if (event.getValue() == CredentialType.User) {
                 educationArea.setVisible(false); educationArea.setRequired(false);
                 descriptionArea.setVisible(false); descriptionArea.setRequired(false);
+                specializationSelect.setVisible(false); specializationSelect.setRequiredIndicatorVisible(false);
+                priceField.setVisible(false); priceField.setRequiredIndicatorVisible(false);
             }
         });
+
+        return type;
+    }
+
+    private Select<Specialization> getSpecializationSelect() {
+        Select<Specialization> type = new Select<>();
+        type.setItems(Specialization.values());
+        type.setLabel("Your specialization:");
+        type.setPlaceholder("Specialization");
+        type.setVisible(false);
+        type.setWidth("400px");
+        type.setMaxWidth("100%");
 
         return type;
     }
@@ -226,5 +249,18 @@ public class RegisterView extends VerticalLayout {
         firstNameField.setMaxWidth("100%");
 
         return firstNameField;
+    }
+
+    private NumberField getPriceField() {
+        NumberField priceField = new NumberField();
+        priceField.setLabel("Your monthly price in $");
+        priceField.setMax(100);
+        priceField.setMin(20);
+        priceField.setVisible(false);
+        priceField.setPlaceholder("For 20.0 to 100.0");
+        priceField.setWidth("400px");
+        priceField.setMaxWidth("100%");
+
+        return priceField;
     }
 }

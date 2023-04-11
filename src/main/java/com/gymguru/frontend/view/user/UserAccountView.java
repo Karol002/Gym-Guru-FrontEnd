@@ -1,47 +1,106 @@
 package com.gymguru.frontend.view.user;
 
 
-import com.vaadin.flow.component.html.H1;
+import com.gymguru.frontend.domain.SubscriptionDto;
+import com.gymguru.frontend.domain.dto.SessionMemoryDto;
+import com.gymguru.frontend.domain.dto.UserDto;
+import com.gymguru.frontend.service.SubscriptionService;
+import com.gymguru.frontend.service.UserService;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-@Route(value = "/gymguru/panel/user/account")
 public class UserAccountView extends VerticalLayout {
-
-    private final Label errorLabel;
+    private final UserService userService;
+    private final SubscriptionService subscriptionService;
+    private final SessionMemoryDto sessionMemoryDto;
+    private final Label accountLabel;
+    private final Label subscriptionLabel;
     private final TextField emailField;
     private final TextField firstNameField;
     private final TextField lastNameField;
-    private final Button saveButton;
+    private TextField startSub;
+    private TextField endSub;
+    private TextField priceSub;
+    private UserDto userDto;
+    private SubscriptionDto subscriptionDto;
+
 
     @Autowired
-    public UserAccountView() {
+    public UserAccountView(UserService userService, SubscriptionService subscriptionService) {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
-        H1 title = new H1("Change your account data");
-        errorLabel = getErrorLabel();
+
+        this.userService = userService;
+        this.subscriptionService = subscriptionService;
+
+        sessionMemoryDto = VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class);
+
+        userDto = userService.getUserById(sessionMemoryDto.getId());
+        accountLabel = getAccountLabel();
         emailField = getEmailField();
         firstNameField = getFirstNameField();
         lastNameField = getLastNameField();
 
-        saveButton = getSaveButton();
+        add(accountLabel, emailField, firstNameField, lastNameField);
 
-        add(title, errorLabel, emailField, firstNameField, lastNameField, saveButton);
+        if (subscriptionService.checkStatus(userDto.getId())) {
+            subscriptionDto = subscriptionService.getSubscription(userDto.getId());
+            subscriptionLabel = getActiveSubscriptionLabel();
+            priceSub = getPriceSub();
+            startSub = getStartSub();
+            endSub = getEndSub();
+            add(accountLabel, emailField, firstNameField, lastNameField, subscriptionLabel, priceSub, startSub, endSub);
+
+        } else {
+            subscriptionLabel = getUnActiveSubscriptionLabel();
+            add(accountLabel, emailField, firstNameField, lastNameField, subscriptionLabel);
+        }
+    }
+
+    private TextField getEndSub() {
+        TextField endSub = new TextField();
+        endSub.setLabel("Subscription end date");
+        endSub.setValue(subscriptionDto.getEndDate().toString());
+        endSub.setWidth("400px");
+        endSub.setMaxWidth("100%");
+        endSub.setReadOnly(true);
+
+        return endSub;
+    }
+
+    private TextField getStartSub() {
+        TextField startSub = new TextField();
+        startSub.setLabel("Subscription start date");
+        startSub.setValue(subscriptionDto.getStartDate().toString());
+        startSub.setWidth("400px");
+        startSub.setMaxWidth("100%");
+        startSub.setReadOnly(true);
+
+        return startSub;
+    }
+
+    private TextField getPriceSub() {
+        TextField priceSub = new TextField();
+        priceSub.setLabel("Subscription price");
+        priceSub.setValue(subscriptionDto.getPrice().toString() + "$");
+        priceSub.setWidth("400px");
+        priceSub.setMaxWidth("100%");
+        priceSub.setReadOnly(true);
+
+        return priceSub;
     }
 
     private TextField getLastNameField() {
         TextField lastNameField = new TextField();
         lastNameField.setLabel("Last Name");
-        lastNameField.setPlaceholder("Enter your last name");
-        lastNameField.setRequired(true);
+        lastNameField.setValue(userDto.getLastName());
         lastNameField.setWidth("400px");
         lastNameField.setMaxWidth("100%");
+        lastNameField.setReadOnly(true);
 
         return lastNameField;
     }
@@ -49,52 +108,39 @@ public class UserAccountView extends VerticalLayout {
     private TextField getEmailField() {
         TextField emailField = new TextField();
         emailField.setLabel("Email");
-        emailField.setPlaceholder("Enter your email");
-        emailField.setRequired(true);
+        emailField.setValue(sessionMemoryDto.getEmail());
         emailField.setWidth("400px");
         emailField.setMaxWidth("100%");
-
+        emailField.setReadOnly(true);
         return emailField;
     }
 
     private TextField getFirstNameField() {
         TextField firstNameField = new TextField();
         firstNameField.setLabel("First Name");
-        firstNameField.setPlaceholder("Enter your first name");
-        firstNameField.setRequired(true);
+        firstNameField.setValue(userDto.getFirstName());
         firstNameField.setWidth("400px");
         firstNameField.setMaxWidth("100%");
+        firstNameField.setReadOnly(true);
 
         return firstNameField;
     }
 
-    private Label getErrorLabel() {
-        Label errorLabel = new Label();
-        errorLabel.getStyle().set("color", "red");
+    private Label getAccountLabel() {
+        Label label = new Label("Your account data");
 
-        return errorLabel;
+        return label;
     }
 
-    private Button getSaveButton() {
-        Button saveButton = new Button("Log in");
-        saveButton.getStyle().set("background-color", "#007bff");
-        saveButton.getStyle().set("color", "#fff");
-        saveButton.getStyle().set("border", "none");
-        saveButton.getStyle().set("border-radius", "0.25rem");
-        saveButton.setWidth("400px");
-        saveButton.setMaxWidth("100%");
-        saveButton.setHeight("60px");
+    private Label getActiveSubscriptionLabel() {
+        Label label = new Label("Your subscription data");
 
-        saveButton.addClickListener(event -> {
-            if (validateData()) Notification.show("Successfully!");
-            else errorLabel.setText("Un correct data");
-        });
-
-        return saveButton;
+        return label;
     }
 
-    private boolean validateData() {
-        return (!(firstNameField.getValue().isEmpty() || lastNameField.getValue().isEmpty()
-                || emailField.getValue().isEmpty()));
+    private Label getUnActiveSubscriptionLabel() {
+        Label label = new Label("You don't have active subscription");
+
+        return label;
     }
 }

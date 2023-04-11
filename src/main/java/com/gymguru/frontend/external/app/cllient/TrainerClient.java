@@ -1,5 +1,6 @@
 package com.gymguru.frontend.external.app.cllient;
 
+import com.gymguru.frontend.domain.Specialization;
 import com.gymguru.frontend.domain.dto.TrainerAccount;
 import com.gymguru.frontend.domain.dto.TrainerDto;
 import com.gymguru.frontend.external.app.config.BackendEndpointConfiguration;
@@ -31,6 +32,16 @@ public class TrainerClient {
 
     public List<TrainerDto> getAllTrainers() throws ResourceAccessException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendEndpointConfiguration.getEndpoint() + backendEndpointConfiguration.getTrainer())
+                .build()
+                .encode()
+                .toUri();
+
+        TrainerDto[] trainers = restTemplate.getForObject(url, TrainerDto[].class);
+        return Arrays.asList(trainers);
+    }
+
+    public List<TrainerDto> getAllTrainersBySpecialization(Specialization specialization) throws ResourceAccessException {
+        URI url = UriComponentsBuilder.fromHttpUrl(backendEndpointConfiguration.getEndpoint() + backendEndpointConfiguration.getTrainer() + "/specialization/" + specialization)
                 .build()
                 .encode()
                 .toUri();

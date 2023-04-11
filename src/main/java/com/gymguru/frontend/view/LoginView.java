@@ -1,6 +1,7 @@
 package com.gymguru.frontend.view;
 
-import com.gymguru.frontend.external.app.cllient.AuthClient;
+import com.gymguru.frontend.domain.Role;
+import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.service.AuthService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "/gymguru/login")
@@ -75,12 +77,19 @@ public class LoginView extends VerticalLayout {
         loginButton.addClickListener(event -> {
             if (authService.signIn(emailField.getValue(), passwordField.getValue())) {
                 Notification.show("Successfully logged in!");
-                UI.getCurrent().navigate("gymguru/panel/user");
+                UI.getCurrent().navigate(choseViewAfterLogin());
             }
             else errorLabel.setText("Invalid username or password");
         });
 
         return loginButton;
+    }
+
+    private String choseViewAfterLogin() {
+        SessionMemoryDto sessionMemoryDto = VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class);
+        if (sessionMemoryDto.getRole() == Role.ROLE_USER) return "gymguru/panel/user";
+        else if (sessionMemoryDto.getRole() == Role.ROLE_TRAINER) return "gymguru/panel/trainer";
+        else return "gymguru";
     }
 
     private PasswordField getPasswordField() {

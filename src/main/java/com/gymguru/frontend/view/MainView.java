@@ -41,6 +41,21 @@ public class MainView extends VerticalLayout {
         add(image, loginButtons, aboutUs);
     }
 
+    public MainView(OpenAiService openAiService, TrainerService trainerService, boolean userStatus) {
+        this.openAiService = openAiService;
+        this.trainerService = trainerService;
+
+        setId("");
+        setWidthFull();
+        setHeightFull();
+        image = getGymImage();
+        loginButtons = getLoginButtons();
+        aboutUs = getAboutUs();
+        loginButtons.setVisible(!userStatus);
+
+        add(image, loginButtons, aboutUs);
+    }
+
     private HorizontalLayout getAboutUs() {
         HorizontalLayout aboutUs = new HorizontalLayout();
         aboutUs.add(getAiLayout());
@@ -257,5 +272,9 @@ public class MainView extends VerticalLayout {
 
     public String getAiOutput(TextField userInput) {
         return openAiService.getAiResponse(userInput.getValue());
+    }
+
+    public void isUserLogIn() {
+        loginButtons.setVisible(false);
     }
 }

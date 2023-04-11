@@ -6,17 +6,22 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AuthToken {
-    @JsonProperty("token")
-    private String token;
-
-    @JsonProperty("role")
-    private Role role;
-
+public class SubscriptionDto {
+    @JsonProperty("price")
+    private BigDecimal price;
+    @JsonProperty("startDate")
+    private LocalDate startDate;
+    @JsonProperty("endDate")
+    private LocalDate endDate;
     @JsonProperty("userId")
     private Long userId;
+    @JsonProperty("trainerId")
+    private Long trainerId;
 }
