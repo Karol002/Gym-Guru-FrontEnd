@@ -58,6 +58,8 @@ public class MainView extends VerticalLayout {
 
     private HorizontalLayout getAboutUs() {
         HorizontalLayout aboutUs = new HorizontalLayout();
+        aboutUs.setMaxWidth("2183px");
+        aboutUs.setMinWidth("1265px");
         aboutUs.add(getAiLayout());
         aboutUs.add(getTrainersLayout());
         aboutUs.setWidthFull();
@@ -161,7 +163,7 @@ public class MainView extends VerticalLayout {
 
         return aiLabel;
     }
-
+    
     private HorizontalLayout getLoginButtons() {
         HorizontalLayout loginButtons = new HorizontalLayout();
         loginButtons.setWidthFull();

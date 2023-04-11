@@ -1,5 +1,6 @@
 package com.gymguru.frontend.view;
 
+import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.service.*;
 import com.gymguru.frontend.view.user.UserAccountView;
 import com.gymguru.frontend.view.user.UserBuyView;
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.tabs.TabsVariant;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "/gymguru/panel/user")
@@ -87,7 +89,7 @@ public class UserView extends AppLayout {
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("Mój plan treningowy")) {
-                setContent(new UserPlanView(subscriptionService, planService));
+                setContent(new UserPlanView(subscriptionService, planService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class)));
             }
         });
 
@@ -101,7 +103,7 @@ public class UserView extends AppLayout {
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("Znajdź swojego trenera")) {
-                setContent(new UserBuyView(trainerService, subscriptionService));
+                setContent(new UserBuyView(trainerService, subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class)));
             }
         });
 

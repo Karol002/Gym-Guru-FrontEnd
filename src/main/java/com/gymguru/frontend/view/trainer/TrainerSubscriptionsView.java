@@ -12,12 +12,14 @@ import com.vaadin.flow.server.VaadinSession;
 
 public class TrainerSubscriptionsView extends VerticalLayout {
     private final SubscriptionService subscriptionService;
+    private final SessionMemoryDto sessionMemoryDto;
     private Grid<SubscriptionWithUserDto> subscriptionDtoGrid;
     private final VerticalLayout container;
     private final Select<SubscriptionStatus> subscriptionStatusSelect;
 
-    public TrainerSubscriptionsView(SubscriptionService subscriptionService) {
+    public TrainerSubscriptionsView(SubscriptionService subscriptionService, SessionMemoryDto sessionMemoryDto) {
         this.subscriptionService = subscriptionService;
+        this.sessionMemoryDto = sessionMemoryDto;
         subscriptionStatusSelect = getSpecializationSelect();
         subscriptionDtoGrid = getSubscriptionGrid();
 
@@ -40,9 +42,9 @@ public class TrainerSubscriptionsView extends VerticalLayout {
         specializationSelect.setLabel("Subscriptions");
         specializationSelect.addValueChangeListener(event -> {
             if (event.getValue() != null || event.getValue() == SubscriptionStatus.All) {
-                subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsByTrainerId(VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class).getId()));
+                subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsByTrainerId(sessionMemoryDto.getId()));
             } else {
-                subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsWithOutPlanByTrainerId(VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class).getId()));
+                subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsWithOutPlanByTrainerId(sessionMemoryDto.getId()));
             }
         });
         return specializationSelect;
@@ -52,7 +54,7 @@ public class TrainerSubscriptionsView extends VerticalLayout {
         Grid<SubscriptionWithUserDto> subscriptionDtoGrid = new Grid<>(SubscriptionWithUserDto.class);
 
         subscriptionDtoGrid.setColumns("userFirstName", "userLastName", "startDate", "endDate", "price");
-        subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsByTrainerId(VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class).getId()));
+        subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsByTrainerId(sessionMemoryDto.getId()));
         return subscriptionDtoGrid;
     }
 }

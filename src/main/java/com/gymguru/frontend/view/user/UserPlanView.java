@@ -12,13 +12,16 @@ import com.vaadin.flow.server.VaadinSession;
 public class UserPlanView extends VerticalLayout {
     private final SubscriptionService subscriptionService;
     private final PlanService planService;
+    private final SessionMemoryDto sessionMemoryDto;
     private final Plan plan;
     private final H1 title;
 
-    public UserPlanView(SubscriptionService subscriptionService, PlanService planService) {
+    public UserPlanView(SubscriptionService subscriptionService, PlanService planService, SessionMemoryDto sessionMemoryDto) {
         this.subscriptionService = subscriptionService;
         this.planService = planService;
-        plan = planService.getPlan(VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class).getId());
+        this.sessionMemoryDto = sessionMemoryDto;
+
+        plan = planService.getPlan(sessionMemoryDto.getId());
         title = getTitle();
         add(title);
     }
@@ -31,7 +34,7 @@ public class UserPlanView extends VerticalLayout {
     }
 
     private String getTitleContent() {
-        if (subscriptionService.checkStatus(VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class).getId())) {
+        if (subscriptionService.checkStatus(sessionMemoryDto.getId())) {
             if (plan != null) return "Your plan";
             else return "Wait for plan";
         } else return "You dont have available subscription";

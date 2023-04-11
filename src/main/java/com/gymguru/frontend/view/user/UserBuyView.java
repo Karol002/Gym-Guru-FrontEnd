@@ -22,13 +22,15 @@ import java.time.LocalDate;
 public class UserBuyView extends VerticalLayout {
     private final TrainerService trainerService;
     private final SubscriptionService subscriptionService;
+    private final SessionMemoryDto sessionMemoryDto;
     private Grid<TrainerDto> trainerGrid;
     private final VerticalLayout container;
     private final Select<Specialization> specializationSelect;
 
-    public UserBuyView(TrainerService trainerService, SubscriptionService subscriptionService) {
+    public UserBuyView(TrainerService trainerService, SubscriptionService subscriptionService, SessionMemoryDto sessionMemoryDto) {
         this.trainerService = trainerService;
         this.subscriptionService = subscriptionService;
+        this.sessionMemoryDto = sessionMemoryDto;
 
         trainerGrid = selectGrid();
         specializationSelect = getSpecializationSelect();
@@ -46,7 +48,7 @@ public class UserBuyView extends VerticalLayout {
     }
 
     private Grid<TrainerDto> selectGrid() {
-        if (subscriptionService.checkStatus(VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class).getId())) {
+        if (subscriptionService.checkStatus(sessionMemoryDto.getId())) {
             return  getTrainersGridWithActiveSubscribe();
         } else  return getTrainersGridWithInactiveSubscription();
     }
@@ -112,14 +114,13 @@ public class UserBuyView extends VerticalLayout {
 
             Button confirmButton = new Button("Confirm", event1 -> {
                 if (!subscriptionLengthSelect.isEmpty()) {
-                    dialog.close();
-
                     if (subscriptionService.subscribe(subscriptionLengthSelect.getValue() ,trainerDto.getMonthPrice(),
                             LocalDate.now(), LocalDate.now().plusMonths(subscriptionLengthSelect.getValue()),
-                            VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class).getId(), trainerDto.getId())) {
+                            sessionMemoryDto.getId(), trainerDto.getId())) {
                         Notification.show("Successfully bought");
                         changeGridAfterBuy();
                     }
+                    dialog.close();
 
                 }
 

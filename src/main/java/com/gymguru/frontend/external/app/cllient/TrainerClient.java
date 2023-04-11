@@ -49,4 +49,14 @@ public class TrainerClient {
         TrainerDto[] trainers = restTemplate.getForObject(url, TrainerDto[].class);
         return Arrays.asList(trainers);
     }
+
+    public TrainerDto getTrainerById(Long id) {
+        URI url = UriComponentsBuilder.fromHttpUrl(backendEndpointConfiguration.getEndpoint() + backendEndpointConfiguration.getTrainer() + "/" + id)
+                .build()
+                .encode()
+                .toUri();
+
+        return restTemplate.getForObject(url, TrainerDto.class);
+
+    }
 }

@@ -44,4 +44,8 @@ public class TrainerService {
             return Collections.emptySet();
         }
     }
+
+    public TrainerDto getTrainers(Long id) {
+        return trainerClient.getTrainerById(id);
+    }
 }

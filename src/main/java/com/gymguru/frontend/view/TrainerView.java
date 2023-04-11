@@ -1,6 +1,9 @@
 package com.gymguru.frontend.view;
 
+import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.service.*;
+import com.gymguru.frontend.view.trainer.TrainerAccountView;
+import com.gymguru.frontend.view.trainer.TrainerPlanView;
 import com.gymguru.frontend.view.trainer.TrainerSubscriptionsView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.html.H1;
@@ -11,6 +14,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.tabs.TabsVariant;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "/gymguru/panel/trainer")
@@ -20,17 +24,21 @@ public class TrainerView extends AppLayout {
     private final TrainerService trainerService;
     private final AuthService authService;
     private final SubscriptionService subscriptionService;
+    private final UserService userService;
     private final PlanService planService;
+    private final WgerService wgerService;
     private final H1 title;
     private final Tabs tabs;
 
     @Autowired
-    public TrainerView(OpenAiService openAiService, TrainerService trainerService, AuthService authService, SubscriptionService subscriptionService, PlanService planService) {
+    public TrainerView(OpenAiService openAiService, TrainerService trainerService, AuthService authService, SubscriptionService subscriptionService, UserService userService, PlanService planService, WgerService wgerService) {
         this.openAiService = openAiService;
         this.trainerService = trainerService;
         this.authService = authService;
         this.subscriptionService = subscriptionService;
+        this.userService = userService;
         this.planService = planService;
+        this.wgerService = wgerService;
 
         title = new H1("Welcome in GYM-GURU trainer Panel");
         title.setWidthFull();
@@ -76,21 +84,21 @@ public class TrainerView extends AppLayout {
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("Stwórz plan")) {
-                //setContent(new UserPlanView(subscriptionService, planService));
+                setContent(new TrainerPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class), wgerService, userService));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("Moi subskrybenci")) {
-                setContent(new TrainerSubscriptionsView(subscriptionService));
+                setContent(new TrainerSubscriptionsView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class)));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("Moje dane")) {
-                //setContent(new UserAccountView(userService, subscriptionService));
+                setContent(new TrainerAccountView(trainerService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class)));
             }
         });
 
