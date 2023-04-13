@@ -30,8 +30,8 @@ public class UserService {
         return userClient.getImpossibleEmails();
     }
 
-    public void  updateUser(Long id, String firstName, String lastName, Long credentialId, String email) {
+  /*  public void  updateUser(Long id, String firstName, String lastName, Long credentialId, String email) {
         UserDto userDto = new UserDto(id, firstName, lastName, credentialId);
         userClient.updateUser(userDto, email);
-    }
+    }*/
 }
