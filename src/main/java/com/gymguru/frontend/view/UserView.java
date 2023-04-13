@@ -108,7 +108,6 @@ public class UserView extends AppLayout {
         });
 
 
-
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("Zmień hasło")) {
@@ -116,7 +115,7 @@ public class UserView extends AppLayout {
             }
         });
 
-        tabs.setSelectedIndex(1);
+        tabs.setSelectedIndex(2);
         tabs.setSelectedIndex(0);
         return tabs;
     }

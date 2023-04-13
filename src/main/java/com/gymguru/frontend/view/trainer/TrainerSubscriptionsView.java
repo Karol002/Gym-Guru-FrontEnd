@@ -41,7 +41,7 @@ public class TrainerSubscriptionsView extends VerticalLayout {
         specializationSelect.setItems(SubscriptionStatus.values());
         specializationSelect.setLabel("Subscriptions");
         specializationSelect.addValueChangeListener(event -> {
-            if (event.getValue() != null || event.getValue() == SubscriptionStatus.All) {
+            if (event.getValue() == null || event.getValue() == SubscriptionStatus.All) {
                 subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsByTrainerId(sessionMemoryDto.getId()));
             } else {
                 subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsWithOutPlanByTrainerId(sessionMemoryDto.getId()));

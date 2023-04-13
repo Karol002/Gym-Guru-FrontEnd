@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class TrainerView extends AppLayout {
     private final OpenAiService openAiService;
     private final TrainerService trainerService;
+    private final EdamamService edamamService;
     private final AuthService authService;
     private final SubscriptionService subscriptionService;
     private final UserService userService;
@@ -31,9 +32,10 @@ public class TrainerView extends AppLayout {
     private final Tabs tabs;
 
     @Autowired
-    public TrainerView(OpenAiService openAiService, TrainerService trainerService, AuthService authService, SubscriptionService subscriptionService, UserService userService, PlanService planService, WgerService wgerService) {
+    public TrainerView(OpenAiService openAiService, TrainerService trainerService, EdamamService edamamService, AuthService authService, SubscriptionService subscriptionService, UserService userService, PlanService planService, WgerService wgerService) {
         this.openAiService = openAiService;
         this.trainerService = trainerService;
+        this.edamamService = edamamService;
         this.authService = authService;
         this.subscriptionService = subscriptionService;
         this.userService = userService;
@@ -84,7 +86,7 @@ public class TrainerView extends AppLayout {
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("Stwórz plan")) {
-                setContent(new TrainerPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class), wgerService, userService));
+                setContent(new TrainerPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class), wgerService, userService, edamamService, planService));
             }
         });
 
@@ -117,7 +119,7 @@ public class TrainerView extends AppLayout {
             }
         });
 
-        tabs.setSelectedIndex(1);
+        tabs.setSelectedIndex(3);
         tabs.setSelectedIndex(0);
         return tabs;
     }

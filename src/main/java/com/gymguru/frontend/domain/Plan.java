@@ -12,9 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Plan {
-    private String description;
-    private UserDto user;
-    private TrainerDto trainer;
-    private List<Exercise> exercises;
-    private List<Meal> meals;
+    private Long id;
+    private String dietDescription;
+    private String exerciseDescription;
+    private Long userId;
+    private Long trainerId;
+    private List<Exercise> saveExerciseDtos;
+    private List<Meal> saveMealDtos;
 }
