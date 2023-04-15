@@ -3,7 +3,10 @@ package com.gymguru.frontend.external.app.cllient;
 import com.gymguru.frontend.domain.Exercise;
 import com.gymguru.frontend.domain.Meal;
 import com.gymguru.frontend.domain.Plan;
+import com.gymguru.frontend.domain.dto.ExerciseWithId;
 import com.gymguru.frontend.domain.dto.MealDto;
+import com.gymguru.frontend.domain.dto.MealWithId;
+import com.gymguru.frontend.domain.dto.PlanDto;
 import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -42,23 +45,50 @@ public class PlanClient {
         return restTemplate.postForEntity(url, backendClientConfiguration.getAuthorizationEntity(plan), Void.class).getStatusCode();
     }
 
-    public List<Meal> getMealsByPlanId(Long planId) {
+    public List<MealWithId> getMealsByPlanId(Long planId) {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getMeal() + "/plan/" + planId)
                 .build()
                 .encode()
                 .toUri();
 
         return List.of(Objects.requireNonNull(restTemplate.exchange
-                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), Meal[].class).getBody()));
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), MealWithId[].class).getBody()));
     }
-    public List<Exercise> getExercisesByPlanId(Long planId) {
+    public List<ExerciseWithId> getExercisesByPlanId(Long planId) {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getExercise() + "/plan/" + planId)
                 .build()
                 .encode()
                 .toUri();
 
         return List.of(Objects.requireNonNull(restTemplate.exchange
-                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), Exercise[].class).getBody()));
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), ExerciseWithId[].class).getBody()));
 
+    }
+
+    public HttpStatus updateExercise(ExerciseWithId exercise) {
+        URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getExercise())
+                .build()
+                .encode()
+                .toUri();
+
+        return restTemplate.exchange(url, HttpMethod.PUT, backendClientConfiguration.getAuthorizationEntity(exercise), Void.class).getStatusCode();
+    }
+
+    public HttpStatus updateMeal(MealWithId mealWithId) {
+        URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getMeal())
+                .build()
+                .encode()
+                .toUri();
+
+        return restTemplate.exchange(url, HttpMethod.PUT, backendClientConfiguration.getAuthorizationEntity(mealWithId), Void.class).getStatusCode();
+    }
+
+    public HttpStatus updatePlan(PlanDto planDto) {
+        URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getPlan())
+                .build()
+                .encode()
+                .toUri();
+
+        return restTemplate.exchange(url, HttpMethod.PUT, backendClientConfiguration.getAuthorizationEntity(planDto), Void.class).getStatusCode();
     }
 }

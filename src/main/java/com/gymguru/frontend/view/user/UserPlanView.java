@@ -3,6 +3,8 @@ package com.gymguru.frontend.view.user;
 import com.gymguru.frontend.domain.Exercise;
 import com.gymguru.frontend.domain.Meal;
 import com.gymguru.frontend.domain.Plan;
+import com.gymguru.frontend.domain.dto.ExerciseWithId;
+import com.gymguru.frontend.domain.dto.MealWithId;
 import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.domain.dto.TrainerDto;
 import com.gymguru.frontend.service.PlanService;
@@ -29,8 +31,8 @@ public class UserPlanView extends VerticalLayout {
         plan = planService.getPlan(sessionMemoryDto.getId());
 
         if (plan != null) {
-            Grid<Exercise> exerciseGrid = getExerciseGird();
-            Grid<Meal> mealGrid = getMealGrid();
+            Grid<ExerciseWithId> exerciseGrid = getExerciseGird();
+            Grid<MealWithId> mealGrid = getMealGrid();
             TextArea trainingDescriptionArea = getTrainingDescriptionArea();
             TextArea mealDescriptionArea = getMealDescriptionArea();
 
@@ -76,7 +78,7 @@ public class UserPlanView extends VerticalLayout {
         } else return "You dont have available subscription";
     }
 
-    private VerticalLayout getContainer(Grid<Meal> mealGrid, TextArea mealDescription, Grid<Exercise> exerciseGrid, TextArea exerciseDescription) {
+    private VerticalLayout getContainer(Grid<MealWithId> mealGrid, TextArea mealDescription, Grid<ExerciseWithId> exerciseGrid, TextArea exerciseDescription) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "80vh");
         container.getStyle().set("width", "100%");
@@ -85,28 +87,28 @@ public class UserPlanView extends VerticalLayout {
         return container;
     }
 
-    private Grid<Exercise> getExerciseGird() {
-        Grid<Exercise> exerciseGrid = new Grid<>(Exercise.class);
+    private Grid<ExerciseWithId> getExerciseGird() {
+        Grid<ExerciseWithId> exerciseGrid = new Grid<>(ExerciseWithId.class);
 
         exerciseGrid.setColumns("name", "seriesQuantity", "repetitionsQuantity");
         exerciseGrid.getColumnByKey("name").setWidth("20%");
         exerciseGrid.getColumnByKey("seriesQuantity").setWidth("15%");
         exerciseGrid.getColumnByKey("repetitionsQuantity").setWidth("15%");
-        exerciseGrid.addColumn(TemplateRenderer.<Exercise>of("<div style='white-space: normal'>[[item.description]]</div>")
-                .withProperty("description", Exercise::getDescription))
+        exerciseGrid.addColumn(TemplateRenderer.<ExerciseWithId>of("<div style='white-space: normal'>[[item.description]]</div>")
+                .withProperty("description", ExerciseWithId::getDescription))
                 .setHeader("Description")
                 .setFlexGrow(50);
         exerciseGrid.setItems(planService.getExercisesByPlanId(plan.getId()));
         return exerciseGrid;
     }
 
-    private Grid<Meal> getMealGrid() {
-        Grid<Meal> mealGrid = new Grid<>(Meal.class);
+    private Grid<MealWithId> getMealGrid() {
+        Grid<MealWithId> mealGrid = new Grid<>(MealWithId.class);
 
         mealGrid.setColumns("name");
         mealGrid.getColumnByKey("name").setWidth("20%");
-        mealGrid.addColumn(TemplateRenderer.<Meal>of("<div style='white-space: normal'>[[item.cookInstruction]]</div>")
-                        .withProperty("cookInstruction", Meal::getCookInstruction))
+        mealGrid.addColumn(TemplateRenderer.<MealWithId>of("<div style='white-space: normal'>[[item.cookInstruction]]</div>")
+                        .withProperty("cookInstruction", MealWithId::getCookInstruction))
                 .setHeader("Cook Instruction")
                 .setFlexGrow(80);
         mealGrid.setItems(planService.getMealsByPlanId(plan.getId()));

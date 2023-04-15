@@ -3,10 +3,14 @@ package com.gymguru.frontend.view.trainer;
 import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.domain.dto.TrainerDto;
 import com.gymguru.frontend.service.TrainerService;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+
+import java.math.BigDecimal;
 
 public class TrainerAccountView extends VerticalLayout {
     private final TrainerService trainerService;
@@ -18,8 +22,10 @@ public class TrainerAccountView extends VerticalLayout {
     private final TextField lastNameField;
     private final TextArea educationArea;
     private final TextArea descriptionArea;
-    private final TextField monthPriceField;
+    private final NumberField monthPriceField;
     private final TextField specialiaztionField;
+    private final Button editButton;
+    private final Button saveButton;
 
     public TrainerAccountView(TrainerService trainerService, SessionMemoryDto sessionMemoryDto) {
         setAlignItems(Alignment.CENTER);
@@ -27,7 +33,7 @@ public class TrainerAccountView extends VerticalLayout {
 
         this.trainerService = trainerService;
         this.sessionMemoryDto = sessionMemoryDto;
-        trainerDto = trainerService.getTrainers(sessionMemoryDto.getId());
+        trainerDto = trainerService.getTrainer(sessionMemoryDto.getId());
 
         accountLabel = getAccountLabel();
         emailField = getEmailField();
@@ -35,10 +41,66 @@ public class TrainerAccountView extends VerticalLayout {
         lastNameField = getLastNameField();
         educationArea = getEducationArea();
         descriptionArea = getDescriptionArea();
-        monthPriceField = getPrice();
+        monthPriceField = getPriceField();
         specialiaztionField = getSpecialzationField();
+        editButton = getEditButton();
+        saveButton = getSaveButton();
 
-        add(accountLabel,emailField, firstNameField, lastNameField, specialiaztionField, monthPriceField, educationArea, descriptionArea);
+        add(accountLabel, emailField, specialiaztionField, firstNameField, lastNameField, monthPriceField, educationArea, descriptionArea, editButton, saveButton);
+    }
+
+    private Button getEditButton() {
+        Button editButton = new Button("Edit account data");
+        editButton.getStyle().set("background-color", "#007bff");
+        editButton.getStyle().set("color", "#fff");
+        editButton.getStyle().set("border", "none");
+        editButton.getStyle().set("border-radius", "0.25rem");
+        editButton.setWidth("400px");
+        editButton.setMaxWidth("100%");
+        editButton.setHeight("60px");
+
+        editButton.addClickListener(event -> {
+            editButton.setVisible(false); saveButton.setVisible(true);
+            firstNameField.setReadOnly(false); lastNameField.setReadOnly(false);
+            descriptionArea.setReadOnly(false); educationArea.setReadOnly(false);
+            monthPriceField.setReadOnly(false);
+        });
+
+        return editButton;
+    }
+
+    private Button getSaveButton() {
+        Button saveButton = new Button("Save data");
+        saveButton.getStyle().set("background-color", "#007bff");
+        saveButton.getStyle().set("color", "#fff");
+        saveButton.getStyle().set("border", "none");
+        saveButton.getStyle().set("border-radius", "0.25rem");
+        saveButton.setWidth("400px");
+        saveButton.setMaxWidth("100%");
+        saveButton.setHeight("60px");
+        saveButton.setVisible(false);
+
+        saveButton.addClickListener(event -> {
+            if (prepareEditData()) {
+                editButton.setVisible(true); saveButton.setVisible(false);
+                firstNameField.setReadOnly(true); lastNameField.setReadOnly(true);
+                descriptionArea.setReadOnly(true); educationArea.setReadOnly(true);
+                monthPriceField.setReadOnly(true);
+                trainerDto = trainerService.getTrainer(sessionMemoryDto.getId());
+            }
+        });
+        return saveButton;
+    }
+
+    private boolean prepareEditData() {
+        if (monthPriceField.getValue() >= monthPriceField.getMin() && monthPriceField.getValue() <= monthPriceField.getMax()) {
+            trainerDto.setFirstName(firstNameField.getValue());
+            trainerDto.setLastName(lastNameField.getValue());
+            trainerDto.setDescription(descriptionArea.getValue());
+            trainerDto.setEducation(educationArea.getValue());
+            trainerDto.setMonthPrice(BigDecimal.valueOf(monthPriceField.getValue()));
+            return trainerService.updateTrainer(trainerDto);
+        } else return false;
     }
 
     private TextField getSpecialzationField() {
@@ -52,13 +114,15 @@ public class TrainerAccountView extends VerticalLayout {
         return specializationField;
     }
 
-    private TextField getPrice() {
-        TextField priceSub = new TextField();
-        priceSub.setLabel("Your monthly price");
-        priceSub.setValue(trainerDto.getMonthPrice().toString() + "$");
+    private NumberField getPriceField() {
+        NumberField priceSub = new NumberField();
+        priceSub.setLabel("Your monthly price in $");
+        priceSub.setMax(100);
+        priceSub.setMin(20);
+        priceSub.setValue(trainerDto.getMonthPrice().doubleValue());
+        priceSub.setReadOnly(true);
         priceSub.setWidth("400px");
         priceSub.setMaxWidth("100%");
-        priceSub.setReadOnly(true);
 
         return priceSub;
     }

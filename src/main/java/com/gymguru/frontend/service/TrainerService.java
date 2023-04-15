@@ -45,7 +45,11 @@ public class TrainerService {
         }
     }
 
-    public TrainerDto getTrainers(Long id) {
+    public TrainerDto getTrainer(Long id) {
         return trainerClient.getTrainerById(id);
+    }
+
+    public Boolean updateTrainer(TrainerDto trainerDto) {
+        return trainerClient.updateTrainer(trainerDto).is2xxSuccessful();
     }
 }

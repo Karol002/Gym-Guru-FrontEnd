@@ -3,14 +3,15 @@ package com.gymguru.frontend.service;
 import com.gymguru.frontend.domain.Exercise;
 import com.gymguru.frontend.domain.Meal;
 import com.gymguru.frontend.domain.Plan;
-import com.gymguru.frontend.domain.dto.ExerciseDto;
-import com.gymguru.frontend.domain.dto.MealDto;
+import com.gymguru.frontend.domain.dto.*;
 import com.gymguru.frontend.external.app.cllient.PlanClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,11 +31,23 @@ public class PlanService {
         return planClient.createPlan(plan).is2xxSuccessful();
     }
 
-    public List<Exercise> getExercisesByPlanId(Long planId) {
-        return planClient.getExercisesByPlanId(planId);
+    public Set<ExerciseWithId> getExercisesByPlanId(Long planId) {
+        return new HashSet<>(planClient.getExercisesByPlanId(planId));
     }
 
-    public List<Meal> getMealsByPlanId(Long planId) {
-        return planClient.getMealsByPlanId(planId);
+    public Set<MealWithId> getMealsByPlanId(Long planId) {
+        return new HashSet<>(planClient.getMealsByPlanId(planId));
+    }
+
+    public boolean updateExercise(ExerciseWithId exercise) {
+        return planClient.updateExercise(exercise).is2xxSuccessful();
+    }
+
+    public boolean updateMeal(MealWithId mealWithId) {
+        return planClient.updateMeal(mealWithId).is2xxSuccessful();
+    }
+
+    public boolean updatePlan(PlanDto planDto) {
+        return planClient.updatePlan(planDto).is2xxSuccessful();
     }
 }

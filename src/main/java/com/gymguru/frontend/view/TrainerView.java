@@ -2,6 +2,7 @@ package com.gymguru.frontend.view;
 
 import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.service.*;
+import com.gymguru.frontend.view.trainer.ExtendPlanView;
 import com.gymguru.frontend.view.trainer.TrainerAccountView;
 import com.gymguru.frontend.view.trainer.TrainerPlanView;
 import com.gymguru.frontend.view.trainer.TrainerSubscriptionsView;
@@ -66,6 +67,7 @@ public class TrainerView extends AppLayout {
         Tabs tabs = new Tabs(
                 new Tab("Strona główna"),
                 new Tab("Stwórz plan"),
+                new Tab("Moje plany"),
                 new Tab("Moi subskrybenci"),
                 new Tab("Moje dane"),
                 new Tab("Zmień hasło"),
@@ -87,6 +89,13 @@ public class TrainerView extends AppLayout {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("Stwórz plan")) {
                 setContent(new TrainerPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class), wgerService, userService, edamamService, planService));
+            }
+        });
+
+        tabs.addSelectedChangeListener(event -> {
+            Tab selectedTab = event.getSelectedTab();
+            if (selectedTab.getLabel().equals("Moje plany")) {
+                setContent(new ExtendPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class), planService));
             }
         });
 

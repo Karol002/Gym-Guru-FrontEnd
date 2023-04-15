@@ -62,4 +62,13 @@ public class TrainerClient {
 
         return restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), TrainerDto.class).getBody();
     }
+
+    public HttpStatus updateTrainer(TrainerDto trainerDto) {
+        URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getTrainer())
+                .build()
+                .encode()
+                .toUri();
+
+        return restTemplate.exchange(url, HttpMethod.PUT, backendClientConfiguration.getAuthorizationEntity(trainerDto), Void.class).getStatusCode();
+    }
 }

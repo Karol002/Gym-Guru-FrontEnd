@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -45,18 +46,16 @@ public class UserClient {
                 .encode()
                 .toUri();
 
-        String[] emails = restTemplate.getForObject(url, String[].class);
-        assert emails != null;
-        return Arrays.asList(emails);
+        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, String[].class)));
     }
 
-/*    public void updateUser(UserDto userDto, String email) {
-        URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getUser() + "/email/" + email)
+    public HttpStatus updateUser(UserDto userDto) {
+        URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getUser())
                 .build()
                 .encode()
                 .toUri();
 
-        restTemplate.put(url, userDto);
-    }*/
+        return restTemplate.exchange(url, HttpMethod.PUT, backendClientConfiguration.getAuthorizationEntity(userDto), Void.class).getStatusCode();
+    }
 
 }

@@ -28,42 +28,20 @@ public class SubscriptionService {
         }
     }
 
+    public List<SubscriptionWithUserDto> getSubscriptionsWithPlanByTrainerId(Long trainerId) {
+        List<SubscriptionDto> subscriptions = subscriptionClient.getSubscriptionsWithPlanByTrainerId(trainerId);
+        return mapToSubscriptionWithUsers(subscriptions);
+    }
+
+
     public List<SubscriptionWithUserDto> getSubscriptionsWithOutPlanByTrainerId(Long trainerId) {
         List<SubscriptionDto> subscriptions = subscriptionClient.getSubscriptionsWithoutPlanByTrainerId(trainerId);
-        List<SubscriptionWithUserDto> subscriptionsWithUser = new ArrayList<>();
-        for (SubscriptionDto subscriptionDto : subscriptions) {
-            UserDto userDto = userClient.getUser(subscriptionDto.getUserId());
-            subscriptionsWithUser.add(new SubscriptionWithUserDto(
-                    subscriptionDto.getPrice(),
-                    subscriptionDto.getStartDate(),
-                    subscriptionDto.getEndDate(),
-                    subscriptionDto.getUserId(),
-                    subscriptionDto.getTrainerId(),
-                    userDto.getFirstName(),
-                    userDto.getLastName()
-            ));
-        }
-
-        return subscriptionsWithUser;
+        return mapToSubscriptionWithUsers(subscriptions);
     }
 
     public List<SubscriptionWithUserDto> getSubscriptionsByTrainerId(Long trainerId) {
         List<SubscriptionDto> subscriptions = subscriptionClient.getAllSubscriptionsByTrainerId(trainerId);
-        List<SubscriptionWithUserDto> subscriptionsWithUser = new ArrayList<>();
-        for (SubscriptionDto subscriptionDto : subscriptions) {
-            UserDto userDto = userClient.getUser(subscriptionDto.getUserId());
-            subscriptionsWithUser.add(new SubscriptionWithUserDto(
-                    subscriptionDto.getPrice(),
-                    subscriptionDto.getStartDate(),
-                    subscriptionDto.getEndDate(),
-                    subscriptionDto.getUserId(),
-                    subscriptionDto.getTrainerId(),
-                    userDto.getFirstName(),
-                    userDto.getLastName()
-            ));
-        }
-
-        return subscriptionsWithUser;
+        return mapToSubscriptionWithUsers(subscriptions);
     }
 
     public boolean checkStatus(Long userId) {
@@ -74,7 +52,29 @@ public class SubscriptionService {
         }
     }
 
+    public boolean extendSubscription(Long userId, Long monthQuantity) {
+        return subscriptionClient.extendSubscription(userId, monthQuantity).is2xxSuccessful();
+    }
+
     public SubscriptionDto getSubscription(Long userId) {
             return subscriptionClient.getSubscriptionByUserId(userId);
+    }
+
+    private List<SubscriptionWithUserDto> mapToSubscriptionWithUsers(List<SubscriptionDto> subscriptions) {
+        List<SubscriptionWithUserDto> subscriptionsWithUser = new ArrayList<>();
+        for (SubscriptionDto subscriptionDto : subscriptions) {
+            UserDto userDto = userClient.getUser(subscriptionDto.getUserId());
+            subscriptionsWithUser.add(new SubscriptionWithUserDto(
+                    subscriptionDto.getPrice(),
+                    subscriptionDto.getStartDate(),
+                    subscriptionDto.getEndDate(),
+                    subscriptionDto.getUserId(),
+                    subscriptionDto.getTrainerId(),
+                    userDto.getFirstName(),
+                    userDto.getLastName()
+            ));
+        }
+
+        return subscriptionsWithUser;
     }
 }

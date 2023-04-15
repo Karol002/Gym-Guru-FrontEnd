@@ -1,20 +1,14 @@
-package com.gymguru.frontend.domain;
+package com.gymguru.frontend.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-public class Plan {
+public class PlanDto {
     private Long id;
     private String dietDescription;
     private String exerciseDescription;
     private Long userId;
     private Long trainerId;
-    private List<Exercise> saveExerciseDtos;
-    private List<Meal> saveMealDtos;
 }

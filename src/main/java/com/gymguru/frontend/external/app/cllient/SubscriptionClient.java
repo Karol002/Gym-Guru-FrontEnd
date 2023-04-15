@@ -29,6 +29,17 @@ public class SubscriptionClient {
         return restTemplate.postForEntity(url, backendClientConfiguration.getAuthorizationEntity(subscriptionDto), Void.class).getStatusCode();
     }
 
+    public HttpStatus extendSubscription(Long userId, Long monthQuantity) throws ResourceAccessException {
+        URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription()
+                        + "/extend/" + userId + "/" + monthQuantity )
+                .build()
+                .encode()
+                .toUri();
+        System.out.println(monthQuantity);
+
+        return restTemplate.exchange(url, HttpMethod.PUT , backendClientConfiguration.getAuthorizationEntity(), Void.class).getStatusCode();
+    }
+
     public Boolean checkStatus(Long userId) throws ResourceAccessException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription() + "/active/" + userId)
                 .build()
@@ -49,6 +60,16 @@ public class SubscriptionClient {
 
     public List<SubscriptionDto> getSubscriptionsWithoutPlanByTrainerId(Long trainerId) throws ResourceAccessException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription() + "/without/plan/" + trainerId)
+                .build()
+                .encode()
+                .toUri();
+
+        return List.of(Objects.requireNonNull(restTemplate.exchange
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), SubscriptionDto[].class).getBody()));
+    }
+
+    public List<SubscriptionDto> getSubscriptionsWithPlanByTrainerId(Long trainerId) throws ResourceAccessException {
+        URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription() + "/with/plan/" + trainerId)
                 .build()
                 .encode()
                 .toUri();
