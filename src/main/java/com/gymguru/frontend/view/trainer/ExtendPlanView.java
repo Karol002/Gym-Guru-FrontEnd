@@ -1,10 +1,7 @@
 package com.gymguru.frontend.view.trainer;
 
 import com.gymguru.frontend.domain.Plan;
-import com.gymguru.frontend.domain.dto.ExerciseWithId;
-import com.gymguru.frontend.domain.dto.MealWithId;
-import com.gymguru.frontend.domain.dto.SessionMemoryDto;
-import com.gymguru.frontend.domain.dto.SubscriptionWithUserDto;
+import com.gymguru.frontend.domain.dto.*;
 import com.gymguru.frontend.service.PlanService;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.vaadin.flow.component.button.Button;
@@ -213,7 +210,6 @@ public class ExtendPlanView extends VerticalLayout {
         TextArea trainingDescriptionArea = new TextArea();
         trainingDescriptionArea.setValue(plan.getExerciseDescription());
         trainingDescriptionArea.setWidthFull();
-        trainingDescriptionArea.setLabel("Training description");
         trainingDescriptionArea.setReadOnly(true);
 
         return trainingDescriptionArea;
@@ -222,15 +218,15 @@ public class ExtendPlanView extends VerticalLayout {
     private HorizontalLayout getTrainingLayout() {
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setWidthFull();
-        horizontalLayout.setHeightFull();
-        Button trainingButton = getUpdateTrainigDescriptionButton();
         TextArea trainingArea = getTrainingDescriptionArea();
-        horizontalLayout.add(trainingArea, trainingButton);
+        Button saveButton = getTrainingSaveButton(plan.getDietDescription(), trainingArea);
+        Button trainingButton = getUpdateTrainigDescriptionButton(trainingArea, saveButton);
+        horizontalLayout.add(trainingArea, trainingButton, saveButton);
 
         return horizontalLayout;
     }
 
-    private Button getUpdateTrainigDescriptionButton() {
+    private Button getUpdateTrainigDescriptionButton(TextArea trainingArea, Button saveButton) {
         Button editTriningDescriptionButton = new Button("Edit training description");
         editTriningDescriptionButton.getStyle().set("background-color", "#002d5c");
         editTriningDescriptionButton.getStyle().set("color", "#fff");
@@ -238,7 +234,13 @@ public class ExtendPlanView extends VerticalLayout {
         editTriningDescriptionButton.getStyle().set("border-radius", "0.25rem");
         editTriningDescriptionButton.setWidth("400px");
         editTriningDescriptionButton.setMaxWidth("100%");
-        editTriningDescriptionButton.getStyle().set("margin-top", "20px");
+        editTriningDescriptionButton.setHeight("88%");
+
+        editTriningDescriptionButton.addClickListener(event -> {
+            editTriningDescriptionButton.setVisible(false);
+            saveButton.setVisible(true);
+            trainingArea.setReadOnly(false);
+        });
 
         return editTriningDescriptionButton;
     }
@@ -247,7 +249,6 @@ public class ExtendPlanView extends VerticalLayout {
         TextArea mealDescriptionArea = new TextArea();
         mealDescriptionArea.setValue(plan.getDietDescription());
         mealDescriptionArea.setWidthFull();
-        mealDescriptionArea.setLabel("Diet description");
         mealDescriptionArea.setReadOnly(true);
 
         return mealDescriptionArea;
@@ -256,15 +257,15 @@ public class ExtendPlanView extends VerticalLayout {
     private HorizontalLayout getDietLayout() {
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setWidthFull();
-        horizontalLayout.setHeightFull();
-        Button dietButton = getUpdateDietDescriptionButton();
         TextArea dietArea = getMealDescriptionArea();
-        horizontalLayout.add(dietArea, dietButton);
+        Button saveButton = getDietSaveButton(dietArea, plan.getExerciseDescription());
+        Button dietButton = getUpdateDietDescriptionButton(dietArea, saveButton);
+        horizontalLayout.add(dietArea, dietButton, saveButton);
 
         return horizontalLayout;
     }
 
-    private Button getUpdateDietDescriptionButton() {
+    private Button getUpdateDietDescriptionButton(TextArea dietArea, Button saveButton) {
         Button editDietDescriptionButton = new Button("Edit diet description");
         editDietDescriptionButton.getStyle().set("background-color", "#002d5c");
         editDietDescriptionButton.getStyle().set("color", "#fff");
@@ -272,8 +273,52 @@ public class ExtendPlanView extends VerticalLayout {
         editDietDescriptionButton.getStyle().set("border-radius", "0.25rem");
         editDietDescriptionButton.setWidth("400px");
         editDietDescriptionButton.setMaxWidth("100%");
-        editDietDescriptionButton.getStyle().set("margin-top", "20px");
+        editDietDescriptionButton.setHeight("88%");
+
+        editDietDescriptionButton.addClickListener(event -> {
+            editDietDescriptionButton.setVisible(false);
+            saveButton.setVisible(true);
+            dietArea.setReadOnly(false);
+        });
 
         return editDietDescriptionButton;
+    }
+
+    private Button getTrainingSaveButton(String dietDescription, TextArea planDescription) {
+        Button saveButton = new Button("Save changes");
+        saveButton.getStyle().set("background-color", "#002d5c");
+        saveButton.getStyle().set("color", "#fff");
+        saveButton.getStyle().set("border", "none");
+        saveButton.getStyle().set("border-radius", "0.25rem");
+        saveButton.setWidth("400px");
+        saveButton.setMaxWidth("100%");
+        saveButton.setHeight("88%");
+        saveButton.setVisible(false);
+
+        saveButton.addClickListener(event -> {
+            planService.updatePlan(new PlanDto(plan.getId(), dietDescription, planDescription.getValue(), plan.getUserId(), plan.getTrainerId()));
+            getSinglePlan(plan.getUserId());
+        });
+
+        return saveButton;
+    }
+
+    private Button getDietSaveButton(TextArea dietDescription, String planDescription) {
+        Button saveButton = new Button("Save changes");
+        saveButton.getStyle().set("background-color", "#002d5c");
+        saveButton.getStyle().set("color", "#fff");
+        saveButton.getStyle().set("border", "none");
+        saveButton.getStyle().set("border-radius", "0.25rem");
+        saveButton.setWidth("400px");
+        saveButton.setMaxWidth("100%");
+        saveButton.setHeight("88%");
+        saveButton.setVisible(false);
+
+        saveButton.addClickListener(event -> {
+            planService.updatePlan(new PlanDto(plan.getId(), dietDescription.getValue(), planDescription, plan.getUserId(), plan.getTrainerId()));
+            getSinglePlan(plan.getUserId());
+        });
+
+        return saveButton;
     }
 }
