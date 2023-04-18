@@ -20,17 +20,14 @@ public class TrainerExtendPlanView extends VerticalLayout {
     private final SubscriptionService subscriptionService;
     private final PlanService planService;
     private final SessionMemoryDto sessionMemoryDto;
-    private Grid<SubscriptionWithUserDto> subscriptionDtoGrid;
-    private Grid<ExerciseWithId> exerciseGrid;
-    private Grid<MealWithId> mealGrid;
+    private final VerticalLayout container;
     private Plan plan;
-    private VerticalLayout container;
 
     public TrainerExtendPlanView(SubscriptionService subscriptionService, SessionMemoryDto sessionMemoryDto, PlanService planService) {
         this.subscriptionService = subscriptionService;
         this.planService = planService;
         this.sessionMemoryDto = sessionMemoryDto;
-        subscriptionDtoGrid = getSubscriptionGrid();
+        Grid<SubscriptionWithUserDto> subscriptionDtoGrid = getSubscriptionGrid();
 
         this.container = getContainer(subscriptionDtoGrid);
         add(container);
@@ -49,8 +46,8 @@ public class TrainerExtendPlanView extends VerticalLayout {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "80vh");
         container.getStyle().set("width", "100%");
-        exerciseGrid = getExerciseGird();
-        mealGrid = getMealGrid();
+        Grid<ExerciseWithId> exerciseGrid = getExerciseGird();
+        Grid<MealWithId> mealGrid = getMealGrid();
         container.add(trainingLayout, exerciseGrid, dietLayout, mealGrid);
 
         return container;
@@ -118,11 +115,15 @@ public class TrainerExtendPlanView extends VerticalLayout {
                     && seriesField.getValue() <= seriesField.getMax()
                     && !descriptionArea.isEmpty() && !exerciseNameField.isEmpty()) {
 
-                planService.updateExercise(new ExerciseWithId(
-                        exercise.getId(), exerciseNameField.getValue(), descriptionArea.getValue(), repetitionsField.getValue(), seriesField.getValue(), plan.getId()));
+                if (planService.updateExercise(new ExerciseWithId(
+                        exercise.getId(), exerciseNameField.getValue(), descriptionArea.getValue(),
+                        repetitionsField.getValue(), seriesField.getValue(), plan.getId()))) {
+                    Notification.show("Successful update exercise");
+                } else Notification.show("Error update exercise");
+
                 dialog.close();
                 getSinglePlan(plan.getUserId());
-                Notification.show("Successful update training");
+                Notification.show("Successful update exercise");
             }
 
         });
@@ -173,8 +174,11 @@ public class TrainerExtendPlanView extends VerticalLayout {
 
         Button confirmButton = new Button("Confirm", event1 -> {
             if (!cookInstructionArea.isEmpty() && !mealNameField.isEmpty()) {
-                planService.updateMeal(new MealWithId(
-                        mealWithId.getId(), mealNameField.getValue(), cookInstructionArea.getValue(), plan.getId()));
+                if (planService.updateMeal(new MealWithId(
+                        mealWithId.getId(), mealNameField.getValue(), cookInstructionArea.getValue(), plan.getId()))) {
+                    Notification.show("Successful update diet");
+                } else  Notification.show("Error update diet");
+
                 dialog.close();
                 getSinglePlan(plan.getUserId());
                 Notification.show("Successful update diet");
@@ -300,9 +304,10 @@ public class TrainerExtendPlanView extends VerticalLayout {
         saveButton.setVisible(false);
 
         saveButton.addClickListener(event -> {
-            planService.updatePlan(new PlanDto(plan.getId(), dietDescription, planDescription.getValue(), plan.getUserId(), plan.getTrainerId()));
+            if (planService.updatePlan(new PlanDto(plan.getId(), dietDescription, planDescription.getValue(), plan.getUserId(), plan.getTrainerId()))) {
+                Notification.show("Successful update training instructions");
+            } else Notification.show("Error update training instructions");
             getSinglePlan(plan.getUserId());
-            Notification.show("Successful update training instructions");
         });
 
         return saveButton;
@@ -320,9 +325,10 @@ public class TrainerExtendPlanView extends VerticalLayout {
         saveButton.setVisible(false);
 
         saveButton.addClickListener(event -> {
-            planService.updatePlan(new PlanDto(plan.getId(), dietDescription.getValue(), planDescription, plan.getUserId(), plan.getTrainerId()));
+            if (planService.updatePlan(new PlanDto(plan.getId(), dietDescription.getValue(), planDescription, plan.getUserId(), plan.getTrainerId()))) {
+                Notification.show("Successful update cook instruction");
+            } else Notification.show("Error update cook instruction");
             getSinglePlan(plan.getUserId());
-            Notification.show("Successful update cook instruction");
         });
 
         return saveButton;

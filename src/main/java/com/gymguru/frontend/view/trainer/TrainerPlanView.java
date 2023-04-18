@@ -8,12 +8,11 @@ import com.gymguru.frontend.service.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
@@ -32,21 +31,21 @@ public class TrainerPlanView extends VerticalLayout {
     private final PlanService planService;
     private final TrainerDialogCreator trainerDialogCreator;
     private final List<Category> categories;
-    private Grid<ExerciseDto> exerciseDtoGrid;
-    private Grid<SubscriptionWithUserDto> subscriptionDtoGrid;
-    private Grid<MealDto> mealDtoGrid;
-    private VerticalLayout mainContainer;
     private final Select<String> exerciseCategory;
-    private UserDto userDto;
     private final Button finishButton;
     private final Button exerciseButton;
     private final List<Exercise> exercises = new ArrayList<>();
     private final List<Meal> meals = new ArrayList<>();
     private final TextField mealNameField;
     private final Button findMealButton;
+    private final HorizontalLayout findMealLayout;
+    private final Grid<ExerciseDto> exerciseDtoGrid;
+    private final Grid<MealDto> mealDtoGrid;
+    private final VerticalLayout mainContainer;
+    private Grid<SubscriptionWithUserDto> subscriptionDtoGrid;
+    private UserDto userDto;
     private String dietDescription;
     private String trainingDescription;
-    private final HorizontalLayout findMealLayout;
 
     public TrainerPlanView(SubscriptionService subscriptionService, SessionMemoryDto sessionMemoryDto, WgerService wgerService,
                            UserService userService, EdamamService edmamService, PlanService planService) {
@@ -134,12 +133,10 @@ public class TrainerPlanView extends VerticalLayout {
                 if(!descriptionArea.isEmpty()) {
                     dialog.close();
                     trainingDescription = descriptionArea.getValue();
-                    planService.createPlan(dietDescription, trainingDescription, userDto.getId(), sessionMemoryDto.getId(), exercises, meals);
-                    meals.clear();
-                    exercises.clear();
-                    mainContainer.removeAll();
-                    subscriptionDtoGrid = getSubscriptionGrid();
-                    mainContainer.add(getUsersContainer(subscriptionDtoGrid));
+                    if (planService.createPlan(dietDescription, trainingDescription, userDto.getId(), sessionMemoryDto.getId(), exercises, meals)) {
+                        Notification.show("Successful create plan");
+                    } else Notification.show("Plan create error");
+                    refresh();
                     dialog.close();
                 }
             });
@@ -311,5 +308,13 @@ public class TrainerPlanView extends VerticalLayout {
             }
         });
         return mealButton;
+    }
+
+    private void refresh() {
+        meals.clear();
+        exercises.clear();
+        mainContainer.removeAll();
+        subscriptionDtoGrid = getSubscriptionGrid();
+        mainContainer.add(getUsersContainer(subscriptionDtoGrid));
     }
 }

@@ -1,7 +1,7 @@
 package com.gymguru.frontend.external.app.cllient;
 
-import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
 import com.gymguru.frontend.domain.dto.OpenAiMessageDto;
+import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;

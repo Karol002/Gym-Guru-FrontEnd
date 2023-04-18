@@ -4,9 +4,9 @@ import com.gymguru.frontend.domain.CredentialType;
 import com.gymguru.frontend.domain.Specialization;
 import com.gymguru.frontend.service.TrainerService;
 import com.gymguru.frontend.service.UserService;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -35,8 +35,6 @@ public class RegisterView extends VerticalLayout {
     private final Select<CredentialType> type;
     private final Select<Specialization> specializationSelect;
     private final NumberField priceField;
-    private final Button registerButton;
-    private final Button loginButton;
 
     @Autowired
     public RegisterView(UserService userService, TrainerService trainerService) {
@@ -60,8 +58,8 @@ public class RegisterView extends VerticalLayout {
         specializationSelect = getSpecializationSelect();
         priceField = getPriceField();
 
-        registerButton = getRegisterButton();
-        loginButton = getLoginButton();
+        Button registerButton = getRegisterButton();
+        Button loginButton = getLoginButton();
 
         add(title, errorLabel, type, emailField, passwordField, specializationSelect, firstNameField, lastNameField, priceField, educationArea, descriptionArea, registerButton, loginButton);
     }

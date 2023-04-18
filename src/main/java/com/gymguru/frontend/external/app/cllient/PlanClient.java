@@ -1,11 +1,6 @@
 package com.gymguru.frontend.external.app.cllient;
 
-import com.gymguru.frontend.domain.Exercise;
-import com.gymguru.frontend.domain.Meal;
 import com.gymguru.frontend.domain.Plan;
-import com.gymguru.frontend.domain.dto.ExerciseWithId;
-import com.gymguru.frontend.domain.dto.MealDto;
-import com.gymguru.frontend.domain.dto.MealWithId;
 import com.gymguru.frontend.domain.dto.PlanDto;
 import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
 import lombok.RequiredArgsConstructor;
@@ -13,13 +8,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor

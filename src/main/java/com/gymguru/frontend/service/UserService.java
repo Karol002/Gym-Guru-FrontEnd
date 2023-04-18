@@ -1,18 +1,13 @@
 package com.gymguru.frontend.service;
 
-import com.gymguru.frontend.domain.dto.UserToSaveDto;
 import com.gymguru.frontend.domain.dto.UserDto;
-import com.gymguru.frontend.external.app.cllient.AuthClient;
+import com.gymguru.frontend.domain.dto.UserToSaveDto;
 import com.gymguru.frontend.external.app.cllient.UserClient;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResourceAccessException;
-
-import java.util.Collection;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

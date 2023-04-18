@@ -21,12 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @PageTitle("Login user")
 public class LoginView extends VerticalLayout {
     private final AuthService authService;
-    private final H1 title;
     private final Label errorLabel;
     private final TextField emailField;
     private final PasswordField passwordField;
-    private final Button loginButton;
-    private final Button registerButton;
 
     @Autowired
     public LoginView(AuthService authService) {
@@ -34,14 +31,14 @@ public class LoginView extends VerticalLayout {
         setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
 
         this.authService = authService;
-        title = new H1("Please log in to your account");
+        H1 title = new H1("Please log in to your account");
         errorLabel = getErrorLabel();
 
         emailField = getEmailField();
         passwordField = getPasswordField();
 
-        loginButton = getLoginButton();
-        registerButton = getRegisterButton();
+        Button loginButton = getLoginButton();
+        Button registerButton = getRegisterButton();
 
         add(title, errorLabel, emailField, passwordField, loginButton, registerButton);
     }

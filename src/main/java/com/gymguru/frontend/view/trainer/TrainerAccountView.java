@@ -15,16 +15,14 @@ import java.math.BigDecimal;
 public class TrainerAccountView extends VerticalLayout {
     private final TrainerService trainerService;
     private final SessionMemoryDto sessionMemoryDto;
-    private TrainerDto trainerDto;
-    private final TextField emailField;
     private final TextField firstNameField;
     private final TextField lastNameField;
     private final TextArea educationArea;
     private final TextArea descriptionArea;
     private final NumberField monthPriceField;
-    private final TextField specialiaztionField;
     private final Button editButton;
     private final Button saveButton;
+    private TrainerDto trainerDto;
 
     public TrainerAccountView(TrainerService trainerService, SessionMemoryDto sessionMemoryDto) {
         setAlignItems(Alignment.CENTER);
@@ -34,13 +32,13 @@ public class TrainerAccountView extends VerticalLayout {
         this.sessionMemoryDto = sessionMemoryDto;
         trainerDto = trainerService.getTrainer(sessionMemoryDto.getId());
 
-        emailField = getEmailField();
+        TextField emailField = getEmailField();
         firstNameField = getFirstNameField();
         lastNameField = getLastNameField();
         educationArea = getEducationArea();
         descriptionArea = getDescriptionArea();
         monthPriceField = getPriceField();
-        specialiaztionField = getSpecialzationField();
+        TextField specialiaztionField = getSpecialzationField();
         editButton = getEditButton();
         saveButton = getSaveButton();
 

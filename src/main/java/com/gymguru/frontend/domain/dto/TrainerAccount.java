@@ -1,6 +1,5 @@
 package com.gymguru.frontend.domain.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gymguru.frontend.domain.Specialization;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

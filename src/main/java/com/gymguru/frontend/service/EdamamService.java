@@ -1,8 +1,8 @@
 package com.gymguru.frontend.service;
 
 import com.gymguru.frontend.domain.dto.MealDto;
-import lombok.RequiredArgsConstructor;
 import com.gymguru.frontend.external.app.cllient.EdamamClient;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

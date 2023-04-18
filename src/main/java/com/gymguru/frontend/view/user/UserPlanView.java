@@ -1,17 +1,13 @@
 package com.gymguru.frontend.view.user;
 
-import com.gymguru.frontend.domain.Exercise;
-import com.gymguru.frontend.domain.Meal;
 import com.gymguru.frontend.domain.Plan;
 import com.gymguru.frontend.domain.dto.ExerciseWithId;
 import com.gymguru.frontend.domain.dto.MealWithId;
 import com.gymguru.frontend.domain.dto.SessionMemoryDto;
-import com.gymguru.frontend.domain.dto.TrainerDto;
 import com.gymguru.frontend.service.PlanService;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.renderer.TemplateRenderer;

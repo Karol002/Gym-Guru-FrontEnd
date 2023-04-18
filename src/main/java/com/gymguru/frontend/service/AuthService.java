@@ -1,11 +1,10 @@
 package com.gymguru.frontend.service;
 
 import com.gymguru.frontend.domain.AuthToken;
-import com.gymguru.frontend.domain.Role;
+import com.gymguru.frontend.domain.dto.CredentialDto;
 import com.gymguru.frontend.domain.dto.PasswordChanger;
 import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.external.app.cllient.AuthClient;
-import com.gymguru.frontend.domain.dto.CredentialDto;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinSession;
 import lombok.RequiredArgsConstructor;

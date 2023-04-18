@@ -1,6 +1,5 @@
 package com.gymguru.frontend.view.trainer;
 
-import com.gymguru.frontend.domain.SubscriptionDto;
 import com.gymguru.frontend.domain.SubscriptionStatus;
 import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.domain.dto.SubscriptionWithUserDto;
@@ -8,22 +7,19 @@ import com.gymguru.frontend.service.SubscriptionService;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.server.VaadinSession;
 
 public class TrainerSubscriptionsView extends VerticalLayout {
     private final SubscriptionService subscriptionService;
     private final SessionMemoryDto sessionMemoryDto;
-    private Grid<SubscriptionWithUserDto> subscriptionDtoGrid;
-    private final VerticalLayout container;
-    private final Select<SubscriptionStatus> subscriptionStatusSelect;
+    private final Grid<SubscriptionWithUserDto> subscriptionDtoGrid;
 
     public TrainerSubscriptionsView(SubscriptionService subscriptionService, SessionMemoryDto sessionMemoryDto) {
         this.subscriptionService = subscriptionService;
         this.sessionMemoryDto = sessionMemoryDto;
-        subscriptionStatusSelect = getSpecializationSelect();
+        Select<SubscriptionStatus> subscriptionStatusSelect = getSpecializationSelect();
         subscriptionDtoGrid = getSubscriptionGrid();
 
-        this.container = getContainer(subscriptionDtoGrid, subscriptionStatusSelect);
+        VerticalLayout container = getContainer(subscriptionDtoGrid, subscriptionStatusSelect);
         add(container);
     }
 

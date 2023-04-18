@@ -3,7 +3,6 @@ package com.gymguru.frontend.domain.dto;
 
 import com.gymguru.frontend.domain.SubscriptionDto;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

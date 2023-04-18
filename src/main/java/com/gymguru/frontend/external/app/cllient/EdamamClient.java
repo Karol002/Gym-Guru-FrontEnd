@@ -1,13 +1,8 @@
 package com.gymguru.frontend.external.app.cllient;
 
 import com.gymguru.frontend.domain.dto.MealDto;
-import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
-
-import com.vaadin.flow.server.VaadinSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

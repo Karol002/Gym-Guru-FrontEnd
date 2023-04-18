@@ -2,7 +2,6 @@ package com.gymguru.frontend.service;
 
 import com.gymguru.frontend.domain.Category;
 import com.gymguru.frontend.domain.dto.ExerciseDto;
-import com.gymguru.frontend.external.app.cllient.AuthClient;
 import com.gymguru.frontend.external.app.cllient.WgerClient;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

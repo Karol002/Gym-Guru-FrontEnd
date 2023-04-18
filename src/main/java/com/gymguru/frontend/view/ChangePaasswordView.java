@@ -17,7 +17,6 @@ public class ChangePaasswordView extends VerticalLayout {
     private final PasswordField oldPassword;
     private final PasswordField newPassword;
     private final PasswordField secondNewPassoword;
-    private final Button confirmButton;
     private final Label errorLabel;
 
     public ChangePaasswordView(AuthService authService) {
@@ -29,7 +28,7 @@ public class ChangePaasswordView extends VerticalLayout {
         oldPassword = getOldPasswordField();
         newPassword = getNewPasswordField();
         secondNewPassoword = getSecondNewPasswordField();
-        confirmButton = getConfirmButton();
+        Button confirmButton = getConfirmButton();
         errorLabel = getErrorLabel();
 
         add(errorLabel, oldPassword, newPassword, secondNewPassoword, confirmButton);

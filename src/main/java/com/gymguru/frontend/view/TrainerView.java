@@ -2,8 +2,8 @@ package com.gymguru.frontend.view;
 
 import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.service.*;
-import com.gymguru.frontend.view.trainer.TrainerExtendPlanView;
 import com.gymguru.frontend.view.trainer.TrainerAccountView;
+import com.gymguru.frontend.view.trainer.TrainerExtendPlanView;
 import com.gymguru.frontend.view.trainer.TrainerPlanView;
 import com.gymguru.frontend.view.trainer.TrainerSubscriptionsView;
 import com.vaadin.flow.component.applayout.AppLayout;

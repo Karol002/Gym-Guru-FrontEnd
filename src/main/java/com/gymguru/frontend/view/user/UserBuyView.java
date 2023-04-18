@@ -8,13 +8,12 @@ import com.gymguru.frontend.service.TrainerService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
-import com.vaadin.flow.server.VaadinSession;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,9 +22,9 @@ public class UserBuyView extends VerticalLayout {
     private final TrainerService trainerService;
     private final SubscriptionService subscriptionService;
     private final SessionMemoryDto sessionMemoryDto;
-    private Grid<TrainerDto> trainerGrid;
     private final VerticalLayout container;
     private final Select<Specialization> specializationSelect;
+    private Grid<TrainerDto> trainerGrid;
 
     public UserBuyView(TrainerService trainerService, SubscriptionService subscriptionService, SessionMemoryDto sessionMemoryDto) {
         this.trainerService = trainerService;

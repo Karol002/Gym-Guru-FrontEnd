@@ -1,13 +1,11 @@
 package com.gymguru.frontend.view.user;
 
 
-import com.gymguru.frontend.domain.Exercise;
 import com.gymguru.frontend.domain.SubscriptionDto;
 import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.domain.dto.UserDto;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.gymguru.frontend.service.UserService;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
