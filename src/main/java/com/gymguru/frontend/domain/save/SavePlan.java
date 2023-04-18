@@ -12,6 +12,6 @@ public class SavePlan {
     private String exerciseDescription;
     private Long userId;
     private Long trainerId;
-    private List<SaveExercise> saveExercises;
-    private List<SaveMeal> saveMeals;
+    private List<SaveExercise> saveExerciseDtos;
+    private List<SaveMeal> saveMealDtos;
 }
