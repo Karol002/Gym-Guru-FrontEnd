@@ -2,14 +2,11 @@ package com.gymguru.frontend.external.app.cllient;
 
 import com.gymguru.frontend.domain.Category;
 import com.gymguru.frontend.domain.dto.ExerciseDto;
-import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
-import com.vaadin.flow.server.VaadinSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -23,7 +20,7 @@ public class WgerClient {
     private final RestTemplate restTemplate;
     private final BackendClientConfiguration backendClientConfiguration;
 
-    public List<Category> getCategories() {
+    public List<Category> getCategories() throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getWger() + "/categories")
                 .build()
                 .encode()
@@ -33,7 +30,7 @@ public class WgerClient {
                 (restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), Category[].class).getBody()));
     }
 
-    public List<ExerciseDto> getExecises(Long categoryId) {
+    public List<ExerciseDto> getExercises(Long categoryId) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getWger() + "/exercises/" + categoryId)
                 .build()
                 .encode()

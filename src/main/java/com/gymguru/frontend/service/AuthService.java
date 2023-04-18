@@ -32,7 +32,7 @@ public class AuthService {
                 return true;
             }
         } catch (HttpClientErrorException exception) {
-            logger.warn("Sign In failed");
+            logger.warn(exception.getMessage());
             return false;
         }
     }
@@ -42,7 +42,7 @@ public class AuthService {
         try {
              return authClient.changePassword(passwordChanger).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
-            logger.warn("Password change failed");
+            logger.warn(exception.getMessage());
             return false;
         }
     }

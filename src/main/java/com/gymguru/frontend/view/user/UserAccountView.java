@@ -14,19 +14,12 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class UserAccountView extends VerticalLayout {
-    private final static long MAX_SUB_TIME_IN_MONTH = 6L;
     private final UserService userService;
     private final SubscriptionService subscriptionService;
     private final SessionMemoryDto sessionMemoryDto;
@@ -60,8 +53,8 @@ public class UserAccountView extends VerticalLayout {
         emailField = getEmailField();
         firstNameField = getFirstNameField();
         lastNameField = getLastNameField();
-
-        add(accountLabel, emailField, firstNameField, lastNameField);
+        editButton = getEditButton();
+        saveButton = getSaveButton();
 
         if (subscriptionService.checkStatus(userDto.getId())) {
             subscriptionDto = subscriptionService.getSubscription(userDto.getId());
@@ -69,8 +62,6 @@ public class UserAccountView extends VerticalLayout {
             priceSub = getPriceSub();
             startSub = getStartSub();
             endSub = getEndSub();
-            editButton = getEditButton();
-            saveButton = getSaveButton();
             extendButton = getExtendButton();
             add(accountLabel, emailField, firstNameField, lastNameField, subscriptionLabel, priceSub, startSub, endSub, saveButton, editButton, extendButton);
         } else {
@@ -90,17 +81,12 @@ public class UserAccountView extends VerticalLayout {
         extendButton.setHeight("60px");
 
         extendButton.addClickListener(event -> {
-            extendSubscriptionLayout();
+            long maxExtend = subscriptionService.getMaxExtendSubscription(subscriptionDto);
+            if (maxExtend > 0) getSubLengthLayout(maxExtend);
+            else getMaxSubLengthLayout();
         });
 
         return extendButton;
-    }
-
-    private void extendSubscriptionLayout() {
-        long mothDifference = monthsBetween(subscriptionDto.getStartDate(), subscriptionDto.getEndDate());
-        long maxExtend =  (MAX_SUB_TIME_IN_MONTH - mothDifference);
-        if (maxExtend > 0) getSubLengthLayout(maxExtend);
-        else getMaxSubLengthLayout();
     }
 
     private void getSubLengthLayout(long maxExtend) {
@@ -113,19 +99,15 @@ public class UserAccountView extends VerticalLayout {
         Label infoLabel = new Label("Extend your subscription");
         infoLabel.setWidthFull();
 
-        List<Long> subscriptionLengthList = new ArrayList<>();
-        for (long i = 1; i <= maxExtend; i++) {
-            subscriptionLengthList.add(i);
-        }
-
         Select<Long> subscriptionExtendSelect = new Select<>();
-        subscriptionExtendSelect.setItems(subscriptionLengthList);
+        subscriptionExtendSelect.setItems(subscriptionService.getSubscriptionLengthList(maxExtend));
         subscriptionExtendSelect.setLabel("Add month to your subscription");
         subscriptionExtendSelect.setWidthFull();
 
         Button confirmButton = new Button("Confirm", event1 -> {
             if (subscriptionExtendSelect.getValue() != null) {
                 subscriptionService.extendSubscription(sessionMemoryDto.getId(), subscriptionExtendSelect.getValue());
+                Notification.show("Successfully extend subscription!");
                 refresh();
                 dialog.close();
             }
@@ -138,7 +120,6 @@ public class UserAccountView extends VerticalLayout {
             dialog.close();
         });
         closeButton.setWidthFull();
-
 
 
         dialogLayout.add(infoLabel, subscriptionExtendSelect, confirmButton, closeButton);
@@ -163,10 +144,6 @@ public class UserAccountView extends VerticalLayout {
         dialogLayout.add(infoLabel, closeButton);
         dialog.add(dialogLayout);
         dialog.open();
-    }
-
-    private long monthsBetween(LocalDate date1, LocalDate date2) {
-        return ChronoUnit.MONTHS.between(date1.withDayOfMonth(1), date2.withDayOfMonth(1));
     }
 
     private Button getEditButton() {
@@ -205,6 +182,7 @@ public class UserAccountView extends VerticalLayout {
                 editButton.setVisible(true); saveButton.setVisible(false);
                 firstNameField.setReadOnly(true); lastNameField.setReadOnly(true);
                 userDto = userService.getUserById(sessionMemoryDto.getId());
+                Notification.show("Successfully change data!");
             }
         });
         return saveButton;
@@ -282,21 +260,15 @@ public class UserAccountView extends VerticalLayout {
     }
 
     private Label getAccountLabel() {
-        Label label = new Label("Your account data");
-
-        return label;
+        return new Label("Your account data");
     }
 
     private Label getActiveSubscriptionLabel() {
-        Label label = new Label("Your subscription data");
-
-        return label;
+        return new Label("Your subscription data");
     }
 
     private Label getUnActiveSubscriptionLabel() {
-        Label label = new Label("You don't have active subscription");
-
-        return label;
+        return new Label("You don't have active subscription");
     }
 
     private void refresh() {
@@ -309,6 +281,5 @@ public class UserAccountView extends VerticalLayout {
         extendButton = getExtendButton();
         removeAll();
         add(accountLabel, emailField, firstNameField, lastNameField, subscriptionLabel, priceSub, startSub, endSub, saveButton, editButton, extendButton);
-
     }
 }

@@ -26,7 +26,6 @@ public class UserView extends AppLayout {
     private final AuthService authService;
     private final SubscriptionService subscriptionService;
     private final PlanService planService;
-    private final H1 title;
     private final Tabs tabs;
 
     @Autowired
@@ -38,9 +37,9 @@ public class UserView extends AppLayout {
         this.subscriptionService = subscriptionService;
         this.planService = planService;
 
-        title = new H1("Welcome in GYM-GURU user Panel");
+        H1 title = new H1("Welcome in GYM-GURU user Panel");
         title.setWidthFull();
-        title.getStyle().set("text-align", "center"); // wyc
+        title.getStyle().set("text-align", "center");
         setPrimarySection(Section.DRAWER);
         tabs = getTabs();
 
@@ -58,13 +57,14 @@ public class UserView extends AppLayout {
         verticalLayout.add(tabs);
         return verticalLayout;
     }
+
     private Tabs getTabs() {
         Tabs tabs = new Tabs(
-                new Tab("Strona główna"),
-                new Tab("Mój plan treningowy"),
-                new Tab("Znajdź swojego trenera"),
-                new Tab("Informacje o koncie"),
-                new Tab("Zmień hasło"),
+                new Tab("Home"),
+                new Tab("My training plan"),
+                new Tab("Find your trainer"),
+                new Tab("Account Information"),
+                new Tab("Change Password"),
                 new Tab("Log out")
         );
         tabs.setWidthFull();
@@ -74,35 +74,28 @@ public class UserView extends AppLayout {
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Strona główna")) {
+            if (selectedTab.getLabel().equals("Home")) {
                 setContent(new MainView(openAiService, trainerService, true));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Log out")) {
-                authService.logOut();
-            }
-        });
-
-        tabs.addSelectedChangeListener(event -> {
-            Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Mój plan treningowy")) {
+            if (selectedTab.getLabel().equals("My training plan")) {
                 setContent(new UserPlanView(subscriptionService, planService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class)));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Informacje o koncie")) {
+            if (selectedTab.getLabel().equals("Account Information")) {
                 setContent(new UserAccountView(userService, subscriptionService));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Znajdź swojego trenera")) {
+            if (selectedTab.getLabel().equals("Find your trainer")) {
                 setContent(new UserBuyView(trainerService, subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class)));
             }
         });
@@ -110,8 +103,15 @@ public class UserView extends AppLayout {
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Zmień hasło")) {
+            if (selectedTab.getLabel().equals("Change Password")) {
                 setContent(new ChangePaasswordView(authService));
+            }
+        });
+
+        tabs.addSelectedChangeListener(event -> {
+            Tab selectedTab = event.getSelectedTab();
+            if (selectedTab.getLabel().equals("Log out")) {
+                authService.logOut();
             }
         });
 

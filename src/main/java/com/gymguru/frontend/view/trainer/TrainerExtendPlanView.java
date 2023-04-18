@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
@@ -15,7 +16,7 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 
-public class ExtendPlanView extends VerticalLayout {
+public class TrainerExtendPlanView extends VerticalLayout {
     private final SubscriptionService subscriptionService;
     private final PlanService planService;
     private final SessionMemoryDto sessionMemoryDto;
@@ -25,7 +26,7 @@ public class ExtendPlanView extends VerticalLayout {
     private Plan plan;
     private VerticalLayout container;
 
-    public ExtendPlanView(SubscriptionService subscriptionService, SessionMemoryDto sessionMemoryDto, PlanService planService) {
+    public TrainerExtendPlanView(SubscriptionService subscriptionService, SessionMemoryDto sessionMemoryDto, PlanService planService) {
         this.subscriptionService = subscriptionService;
         this.planService = planService;
         this.sessionMemoryDto = sessionMemoryDto;
@@ -67,6 +68,7 @@ public class ExtendPlanView extends VerticalLayout {
                         .withProperty("description", ExerciseWithId::getDescription))
                 .setHeader("Description")
                 .setFlexGrow(50);
+
         exerciseGrid.asSingleSelect().addValueChangeListener(event -> editExercise(exerciseGrid.asSingleSelect().getValue()));
         exerciseGrid.setItems(planService.getExercisesByPlanId(plan.getId()));
         return exerciseGrid;
@@ -120,6 +122,7 @@ public class ExtendPlanView extends VerticalLayout {
                         exercise.getId(), exerciseNameField.getValue(), descriptionArea.getValue(), repetitionsField.getValue(), seriesField.getValue(), plan.getId()));
                 dialog.close();
                 getSinglePlan(plan.getUserId());
+                Notification.show("Successful update training");
             }
 
         });
@@ -174,6 +177,7 @@ public class ExtendPlanView extends VerticalLayout {
                         mealWithId.getId(), mealNameField.getValue(), cookInstructionArea.getValue(), plan.getId()));
                 dialog.close();
                 getSinglePlan(plan.getUserId());
+                Notification.show("Successful update diet");
             }
 
         });
@@ -298,6 +302,7 @@ public class ExtendPlanView extends VerticalLayout {
         saveButton.addClickListener(event -> {
             planService.updatePlan(new PlanDto(plan.getId(), dietDescription, planDescription.getValue(), plan.getUserId(), plan.getTrainerId()));
             getSinglePlan(plan.getUserId());
+            Notification.show("Successful update training instructions");
         });
 
         return saveButton;
@@ -317,6 +322,7 @@ public class ExtendPlanView extends VerticalLayout {
         saveButton.addClickListener(event -> {
             planService.updatePlan(new PlanDto(plan.getId(), dietDescription.getValue(), planDescription, plan.getUserId(), plan.getTrainerId()));
             getSinglePlan(plan.getUserId());
+            Notification.show("Successful update cook instruction");
         });
 
         return saveButton;

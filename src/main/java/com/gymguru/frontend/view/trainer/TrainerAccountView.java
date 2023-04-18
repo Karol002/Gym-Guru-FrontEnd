@@ -4,7 +4,7 @@ import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.domain.dto.TrainerDto;
 import com.gymguru.frontend.service.TrainerService;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -16,7 +16,6 @@ public class TrainerAccountView extends VerticalLayout {
     private final TrainerService trainerService;
     private final SessionMemoryDto sessionMemoryDto;
     private TrainerDto trainerDto;
-    private final Label accountLabel;
     private final TextField emailField;
     private final TextField firstNameField;
     private final TextField lastNameField;
@@ -35,7 +34,6 @@ public class TrainerAccountView extends VerticalLayout {
         this.sessionMemoryDto = sessionMemoryDto;
         trainerDto = trainerService.getTrainer(sessionMemoryDto.getId());
 
-        accountLabel = getAccountLabel();
         emailField = getEmailField();
         firstNameField = getFirstNameField();
         lastNameField = getLastNameField();
@@ -46,7 +44,7 @@ public class TrainerAccountView extends VerticalLayout {
         editButton = getEditButton();
         saveButton = getSaveButton();
 
-        add(accountLabel, emailField, specialiaztionField, firstNameField, lastNameField, monthPriceField, educationArea, descriptionArea, editButton, saveButton);
+        add(emailField, specialiaztionField, firstNameField, lastNameField, monthPriceField, educationArea, descriptionArea, editButton, saveButton);
     }
 
     private Button getEditButton() {
@@ -81,18 +79,19 @@ public class TrainerAccountView extends VerticalLayout {
         saveButton.setVisible(false);
 
         saveButton.addClickListener(event -> {
-            if (prepareEditData()) {
+            if (updateUser()) {
                 editButton.setVisible(true); saveButton.setVisible(false);
                 firstNameField.setReadOnly(true); lastNameField.setReadOnly(true);
                 descriptionArea.setReadOnly(true); educationArea.setReadOnly(true);
                 monthPriceField.setReadOnly(true);
                 trainerDto = trainerService.getTrainer(sessionMemoryDto.getId());
+                Notification.show("Successful change data");
             }
         });
         return saveButton;
     }
 
-    private boolean prepareEditData() {
+    private boolean updateUser() {
         if (monthPriceField.getValue() >= monthPriceField.getMin() && monthPriceField.getValue() <= monthPriceField.getMax()) {
             trainerDto.setFirstName(firstNameField.getValue());
             trainerDto.setLastName(lastNameField.getValue());
@@ -179,11 +178,5 @@ public class TrainerAccountView extends VerticalLayout {
         descriptionArea.setReadOnly(true);
 
         return descriptionArea;
-    }
-
-    private Label getAccountLabel() {
-        Label label = new Label("Your account data");
-
-        return label;
     }
 }

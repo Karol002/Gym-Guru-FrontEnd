@@ -3,7 +3,6 @@ package com.gymguru.frontend.view.trainer;
 import com.gymguru.frontend.domain.Category;
 import com.gymguru.frontend.domain.Exercise;
 import com.gymguru.frontend.domain.Meal;
-import com.gymguru.frontend.domain.Plan;
 import com.gymguru.frontend.domain.dto.*;
 import com.gymguru.frontend.service.*;
 import com.vaadin.flow.component.button.Button;
@@ -17,7 +16,6 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 
 import java.util.ArrayList;
@@ -32,6 +30,7 @@ public class TrainerPlanView extends VerticalLayout {
     private final UserService userService;
     private final EdamamService edmamService;
     private final PlanService planService;
+    private final TrainerDialogCreator trainerDialogCreator;
     private final List<Category> categories;
     private Grid<ExerciseDto> exerciseDtoGrid;
     private Grid<SubscriptionWithUserDto> subscriptionDtoGrid;
@@ -58,9 +57,9 @@ public class TrainerPlanView extends VerticalLayout {
         this.wgerService = wgerService;
         this.userService = userService;
         this.edmamService = edmamService;
+        trainerDialogCreator = new TrainerDialogCreator();
 
         subscriptionDtoGrid = getSubscriptionGrid();
-
         mealDtoGrid = getMealDtoGrid();
         exerciseButton = getExerciseButton();
 
@@ -77,7 +76,6 @@ public class TrainerPlanView extends VerticalLayout {
         this.mainContainer = getUsersContainer(subscriptionDtoGrid);
         add(mainContainer);
     }
-////////////////////////////////////////////////////////////////////////////////////////////////
 
     private VerticalLayout getUsersContainer(Grid<SubscriptionWithUserDto> subscriptionDtoGrid) {
         VerticalLayout container = new VerticalLayout();
@@ -99,29 +97,17 @@ public class TrainerPlanView extends VerticalLayout {
         subscriptionDtoGrid.getColumnByKey("endDate").setWidth("20%");
         subscriptionDtoGrid.getColumnByKey("price").setWidth("20%");
         subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsWithOutPlanByTrainerId(sessionMemoryDto.getId()));
-        subscriptionDtoGrid.addColumn(new ComponentRenderer<>(this::createUserButton)).setHeader("Chose user").setFlexGrow(20);
+        subscriptionDtoGrid.asSingleSelect().addValueChangeListener(event -> selectUser(subscriptionDtoGrid.asSingleSelect().getValue()));
         return subscriptionDtoGrid;
 
     }
 
-    private Button createUserButton(SubscriptionWithUserDto subscriptionWithUserDto) {
-        Button selectUserButton = new Button("Select User", event -> {
-            userDto = userService.getUserById(subscriptionWithUserDto.getUserId());
-            mainContainer.removeAll();
-            mainContainer.add(getMealContainer(mealDtoGrid, exerciseButton, findMealLayout));
-        });
-
-        selectUserButton.getStyle()
-                .set("width", "100%")
-                .set("height", "100px")
-                .set("background-color", "#002d5c")
-                .set("color", "white")
-                .set("font-size", "25px");
-
-        return selectUserButton;
+    private void selectUser(SubscriptionWithUserDto subscriptionWithUserDto) {
+        userDto = userService.getUserById(subscriptionWithUserDto.getUserId());
+        mainContainer.removeAll();
+        mainContainer.add(getMealContainer(mealDtoGrid, exerciseButton, findMealLayout));
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
     private VerticalLayout getExerciseContainer(Grid<ExerciseDto> exercisesDtoGrid, Select<String> specializationSelect, Button finishButton) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "83vh");
@@ -139,7 +125,7 @@ public class TrainerPlanView extends VerticalLayout {
             dialogLayout.setJustifyContentMode(JustifyContentMode.CENTER);
 
             TextArea descriptionArea = new TextArea();
-            descriptionArea.setLabel("Describe your plan");
+            descriptionArea.setLabel("Describe your training");
             descriptionArea.setPlaceholder("Describe");
             descriptionArea.setWidth("400px");
             descriptionArea.setMaxWidth("100%");
@@ -152,6 +138,7 @@ public class TrainerPlanView extends VerticalLayout {
                     meals.clear();
                     exercises.clear();
                     mainContainer.removeAll();
+                    subscriptionDtoGrid = getSubscriptionGrid();
                     mainContainer.add(getUsersContainer(subscriptionDtoGrid));
                     dialog.close();
                 }
@@ -207,79 +194,17 @@ public class TrainerPlanView extends VerticalLayout {
                         .withProperty("description", ExerciseDto::getDescription))
                 .setHeader("Description")
                 .setFlexGrow(60);
-        exerciseDtoGrid.addColumn(new ComponentRenderer<>(this::createExerciseButton)).setHeader("Add exercise").setFlexGrow(20);
+        exerciseDtoGrid.asSingleSelect().addValueChangeListener(event -> selectExercise(exerciseDtoGrid.asSingleSelect().getValue()));
 
         exerciseDtoGrid.setItems(wgerService.getExercises(EXAMPLE_CATEGORY));
 
         return exerciseDtoGrid;
     }
 
-    private Button createExerciseButton(ExerciseDto exerciseDto) {
-        Button buyButton = new Button("Add Exercise", event -> {
-            Dialog dialog = new Dialog();
-            VerticalLayout dialogLayout = new VerticalLayout();
-            dialogLayout.setAlignItems(Alignment.CENTER);
-            dialogLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-
-            Label infoLabel = new Label("Set exercise properties");
-            infoLabel.setWidthFull();
-
-            IntegerField seriesField = new IntegerField();
-            seriesField.setHasControls(true);
-            seriesField.setStep(1);
-            seriesField.setLabel("Series quantity for chosen exercise");
-            seriesField.setMax(20);
-            seriesField.setMin(1);
-            seriesField.setPlaceholder("For 1 to 20");
-            seriesField.setWidth("400px");
-            seriesField.setMaxWidth("100%");
-
-
-            IntegerField repetitionsField = new IntegerField();
-            repetitionsField.setHasControls(true);
-            repetitionsField.setStep(1);
-            repetitionsField.setLabel("Repetitions quantity for chosen exercise");
-            repetitionsField.setMax(50);
-            repetitionsField.setMin(1);
-            repetitionsField.setPlaceholder("For 1 to 50");
-            repetitionsField.setWidth("400px");
-            repetitionsField.setMaxWidth("100%");
-
-            Button confirmButton = new Button("Confirm", event1 -> {
-                if (!repetitionsField.isEmpty() && !seriesField.isEmpty()
-                        && repetitionsField.getValue() <= repetitionsField.getMax()
-                        && seriesField.getValue() <= seriesField.getMax()) {
-                    dialog.close();
-                    exercises.add(new Exercise(exerciseDto.getName(), exerciseDto.getDescription(), seriesField.getValue(), repetitionsField.getValue()));
-                    finishButton.setVisible(true);
-                }
-
-            });
-            confirmButton.getStyle().set("background-color", "#007bff");
-            confirmButton.getStyle().set("color", "#fff");
-            confirmButton.setWidthFull();
-
-            Button closeButton = new Button("Close", event2 -> {
-                dialog.close();
-            });
-            closeButton.setWidthFull();
-
-            dialogLayout.add(infoLabel, seriesField, repetitionsField, confirmButton, closeButton);
-            dialog.add(dialogLayout);
-            dialog.open();
-        });
-
-        buyButton.getStyle()
-                .set("width", "100%")
-                .set("height", "100px")
-                .set("background-color", "#002d5c")
-                .set("color", "white")
-                .set("font-size", "25px");
-
-        return buyButton;
+    private void selectExercise(ExerciseDto exerciseDto) {
+        Dialog dialog = trainerDialogCreator.getExerciseDialog(exercises, exerciseDto, finishButton);
+        dialog.open();
     }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private VerticalLayout getMealContainer(Grid<MealDto> mealDtoGrid, Button exerciseButton, HorizontalLayout horizontalLayout) {
         VerticalLayout container = new VerticalLayout();
@@ -300,48 +225,14 @@ public class TrainerPlanView extends VerticalLayout {
                 .setHeader("Ingredient Lines")
                 .setFlexGrow(60);
 
-        mealDtoGrid.addColumn(new ComponentRenderer<>(this::createMealButton)).setHeader("Add meal").setFlexGrow(20);
+        mealDtoGrid.asSingleSelect().addValueChangeListener(event -> selectMeal(mealDtoGrid.asSingleSelect().getValue()));
         mealDtoGrid.setItems(edmamService.getMeals("chicken"));
         return mealDtoGrid;
     }
 
-    private Button createMealButton(MealDto mealDto) {
-        Button mealButton = new Button("Add Meal", event -> {
-            Dialog dialog = new Dialog();
-            VerticalLayout dialogLayout = new VerticalLayout();
-            dialogLayout.setAlignItems(Alignment.CENTER);
-            dialogLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-
-            Label infoLabel = new Label("Do you want add meal to diet?");
-            infoLabel.setWidthFull();
-
-            Button confirmButton = new Button("Confirm", event1 -> {
-                meals.add(new Meal(mealDto.getLabel(), mealDto.getIngredientLines()));
-                exerciseButton.setVisible(true);
-                dialog.close();
-            });
-            confirmButton.getStyle().set("background-color", "#007bff");
-            confirmButton.getStyle().set("color", "#fff");
-            confirmButton.setWidthFull();
-
-            Button closeButton = new Button("Cancel", event2 -> {
-                dialog.close();
-            });
-            closeButton.setWidthFull();
-
-            dialogLayout.add(infoLabel, confirmButton, closeButton);
-            dialog.add(dialogLayout);
-            dialog.open();
-        });
-
-        mealButton.getStyle()
-                .set("width", "100%")
-                .set("height", "100px")
-                .set("background-color", "#002d5c")
-                .set("color", "white")
-                .set("font-size", "25px");
-
-        return mealButton;
+    private void selectMeal(MealDto mealDto) {
+        Dialog dialog = trainerDialogCreator.getMealDialog(meals, mealDto, exerciseButton);
+        dialog.open();
     }
 
     private Button getExerciseButton() {
@@ -419,7 +310,6 @@ public class TrainerPlanView extends VerticalLayout {
                 mealDtoGrid.setItems(edmamService.getMeals(mealNameField.getValue()));
             }
         });
-
         return mealButton;
     }
 }

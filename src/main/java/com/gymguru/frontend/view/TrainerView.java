@@ -2,7 +2,7 @@ package com.gymguru.frontend.view;
 
 import com.gymguru.frontend.domain.dto.SessionMemoryDto;
 import com.gymguru.frontend.service.*;
-import com.gymguru.frontend.view.trainer.ExtendPlanView;
+import com.gymguru.frontend.view.trainer.TrainerExtendPlanView;
 import com.gymguru.frontend.view.trainer.TrainerAccountView;
 import com.gymguru.frontend.view.trainer.TrainerPlanView;
 import com.gymguru.frontend.view.trainer.TrainerSubscriptionsView;
@@ -29,7 +29,6 @@ public class TrainerView extends AppLayout {
     private final UserService userService;
     private final PlanService planService;
     private final WgerService wgerService;
-    private final H1 title;
     private final Tabs tabs;
 
     @Autowired
@@ -43,7 +42,7 @@ public class TrainerView extends AppLayout {
         this.planService = planService;
         this.wgerService = wgerService;
 
-        title = new H1("Welcome in GYM-GURU trainer Panel");
+        H1 title = new H1("Welcome in GYM-GURU trainer Panel");
         title.setWidthFull();
         title.getStyle().set("text-align", "center"); // wyc
         setPrimarySection(AppLayout.Section.DRAWER);
@@ -63,14 +62,15 @@ public class TrainerView extends AppLayout {
         verticalLayout.add(tabs);
         return verticalLayout;
     }
+
     private Tabs getTabs() {
         Tabs tabs = new Tabs(
-                new Tab("Strona główna"),
-                new Tab("Stwórz plan"),
-                new Tab("Moje plany"),
-                new Tab("Moi subskrybenci"),
-                new Tab("Moje dane"),
-                new Tab("Zmień hasło"),
+                new Tab("Home"),
+                new Tab("Create a plan"),
+                new Tab("My plans"),
+                new Tab("My Subscribers"),
+                new Tab("My Data"),
+                new Tab("Change password"),
                 new Tab("Log out")
         );
         tabs.setWidthFull();
@@ -80,35 +80,35 @@ public class TrainerView extends AppLayout {
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Strona główna")) {
+            if (selectedTab.getLabel().equals("Home")) {
                 setContent(new MainView(openAiService, trainerService, true));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Stwórz plan")) {
+            if (selectedTab.getLabel().equals("Create a plan")) {
                 setContent(new TrainerPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class), wgerService, userService, edamamService, planService));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Moje plany")) {
-                setContent(new ExtendPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class), planService));
+            if (selectedTab.getLabel().equals("My plans")) {
+                setContent(new TrainerExtendPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class), planService));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Moi subskrybenci")) {
+            if (selectedTab.getLabel().equals("My Subscribers")) {
                 setContent(new TrainerSubscriptionsView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class)));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Moje dane")) {
+            if (selectedTab.getLabel().equals("My Data")) {
                 setContent(new TrainerAccountView(trainerService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class)));
             }
         });
@@ -116,7 +116,7 @@ public class TrainerView extends AppLayout {
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("Zmień hasło")) {
+            if (selectedTab.getLabel().equals("Change password")) {
                 setContent(new ChangePaasswordView(authService));
             }
         });

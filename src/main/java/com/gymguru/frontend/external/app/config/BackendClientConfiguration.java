@@ -58,8 +58,3 @@ public class BackendClientConfiguration {
         return new HttpEntity<>(entityObject, headers);
     }
 }
-/*
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class).getToken());
-
-        HttpEntity<?> entity = new HttpEntity<>(headers);*/

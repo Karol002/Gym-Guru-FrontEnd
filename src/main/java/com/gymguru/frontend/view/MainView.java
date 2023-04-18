@@ -275,8 +275,4 @@ public class MainView extends VerticalLayout {
     public String getAiOutput(TextField userInput) {
         return openAiService.getAiResponse(userInput.getValue());
     }
-
-    public void isUserLogIn() {
-        loginButtons.setVisible(false);
-    }
 }

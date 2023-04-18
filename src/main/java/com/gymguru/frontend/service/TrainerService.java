@@ -3,9 +3,13 @@ package com.gymguru.frontend.service;
 import com.gymguru.frontend.domain.Specialization;
 import com.gymguru.frontend.domain.dto.TrainerAccount;
 import com.gymguru.frontend.domain.dto.TrainerDto;
+import com.gymguru.frontend.external.app.cllient.AuthClient;
 import com.gymguru.frontend.external.app.cllient.TrainerClient;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.math.BigDecimal;
@@ -17,6 +21,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class TrainerService {
     private final TrainerClient trainerClient;
+    private final Logger logger = LoggerFactory.getLogger(TrainerService.class);
 
     public boolean createTrainer(String email, String password, String firstName, String lastName,
                                  String education, String decription, Double price, Specialization specialization) {
@@ -24,7 +29,8 @@ public class TrainerService {
         try {
             return trainerClient.createTrainerAccount(new TrainerAccount(email, password, firstName,
                     lastName, education, decription, new BigDecimal(price), specialization)).is2xxSuccessful();
-        } catch (ResourceAccessException exception) {
+        } catch (HttpClientErrorException exception) {
+            logger.warn(exception.getMessage());
             return false;
         }
     }
@@ -32,7 +38,8 @@ public class TrainerService {
     public Set<TrainerDto> getAllBySpecialization(Specialization specialization) {
         try {
             return new HashSet<>(trainerClient.getAllTrainersBySpecialization(specialization));
-        } catch (ResourceAccessException exception) {
+        } catch (HttpClientErrorException exception) {
+            logger.warn(exception.getMessage());
             return Collections.emptySet();
         }
     }
@@ -40,16 +47,27 @@ public class TrainerService {
     public Set<TrainerDto> getTrainers() {
         try {
             return new HashSet<>(trainerClient.getAllTrainers());
-        } catch (ResourceAccessException exception) {
+        } catch (HttpClientErrorException exception) {
+            logger.warn(exception.getMessage());
             return Collections.emptySet();
         }
     }
 
     public TrainerDto getTrainer(Long id) {
-        return trainerClient.getTrainerById(id);
+        try {
+            return trainerClient.getTrainerById(id);
+        } catch (HttpClientErrorException exception) {
+            logger.warn(exception.getMessage());
+            return new TrainerDto();
+        }
     }
 
     public Boolean updateTrainer(TrainerDto trainerDto) {
-        return trainerClient.updateTrainer(trainerDto).is2xxSuccessful();
+        try {
+            return trainerClient.updateTrainer(trainerDto).is2xxSuccessful();
+        } catch (HttpClientErrorException exception) {
+            logger.warn(exception.getMessage());
+            return false;
+        }
     }
 }

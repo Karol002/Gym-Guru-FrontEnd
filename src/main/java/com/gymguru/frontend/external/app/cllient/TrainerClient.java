@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -23,7 +24,7 @@ public class TrainerClient {
     private final RestTemplate restTemplate;
     private final BackendClientConfiguration backendClientConfiguration;
 
-    public HttpStatus createTrainerAccount(TrainerAccount trainer) throws ResourceAccessException {
+    public HttpStatus createTrainerAccount(TrainerAccount trainer) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getTrainer())
                 .build()
                 .encode()
@@ -32,19 +33,16 @@ public class TrainerClient {
         return restTemplate.postForEntity(url, trainer, Void.class).getStatusCode();
     }
 
-    public List<TrainerDto> getAllTrainers() throws ResourceAccessException {
+    public List<TrainerDto> getAllTrainers() throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getTrainer())
                 .build()
                 .encode()
                 .toUri();
 
-        TrainerDto[] trainers = restTemplate.getForObject(url, TrainerDto[].class);
-        assert trainers != null;
-        return Arrays.asList(trainers);
+        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, TrainerDto[].class)));
     }
 
-
-    public List<TrainerDto> getAllTrainersBySpecialization(Specialization specialization) throws ResourceAccessException {
+    public List<TrainerDto> getAllTrainersBySpecialization(Specialization specialization) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getTrainer() + "/specialization/" + specialization)
                 .build()
                 .encode()
@@ -54,7 +52,7 @@ public class TrainerClient {
                 (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), TrainerDto[].class).getBody()));
     }
 
-    public TrainerDto getTrainerById(Long id) {
+    public TrainerDto getTrainerById(Long id) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getTrainer() + "/single/" + id)
                 .build()
                 .encode()
@@ -63,7 +61,7 @@ public class TrainerClient {
         return restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), TrainerDto.class).getBody();
     }
 
-    public HttpStatus updateTrainer(TrainerDto trainerDto) {
+    public HttpStatus updateTrainer(TrainerDto trainerDto) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getTrainer())
                 .build()
                 .encode()
