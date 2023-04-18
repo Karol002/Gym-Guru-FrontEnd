@@ -1,4 +1,4 @@
-package com.gymguru.frontend.domain;
+package com.gymguru.frontend.domain.authorization;
 
 import com.gymguru.frontend.domain.enums.Role;
 import lombok.AllArgsConstructor;

@@ -3,8 +3,8 @@ package com.gymguru.frontend.view.trainer;
 import com.gymguru.frontend.domain.edit.EditExercise;
 import com.gymguru.frontend.domain.edit.EditMeal;
 import com.gymguru.frontend.domain.edit.EditPlan;
-import com.gymguru.frontend.domain.SessionMemory;
-import com.gymguru.frontend.domain.SubscriptionWithUser;
+import com.gymguru.frontend.domain.authorization.SessionMemory;
+import com.gymguru.frontend.domain.read.ReadSubscriptionWithUserSave;
 import com.gymguru.frontend.service.PlanService;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.vaadin.flow.component.button.Button;
@@ -30,13 +30,13 @@ public class TrainerExtendPlanView extends VerticalLayout {
         this.subscriptionService = subscriptionService;
         this.planService = planService;
         this.sessionMemory = sessionMemory;
-        Grid<SubscriptionWithUser> subscriptionDtoGrid = getSubscriptionGrid();
+        Grid<ReadSubscriptionWithUserSave> subscriptionDtoGrid = getSubscriptionGrid();
 
         this.container = getContainer(subscriptionDtoGrid);
         add(container);
     }
 
-    private VerticalLayout getContainer(Grid<SubscriptionWithUser> subscriptionDtoGrid) {
+    private VerticalLayout getContainer(Grid<ReadSubscriptionWithUserSave> subscriptionDtoGrid) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "83vh");
         container.getStyle().set("width", "100%");
@@ -198,8 +198,8 @@ public class TrainerExtendPlanView extends VerticalLayout {
         dialog.open();
     }
 
-    private Grid<SubscriptionWithUser> getSubscriptionGrid() {
-        Grid<SubscriptionWithUser> subscriptionDtoGrid = new Grid<>(SubscriptionWithUser.class);
+    private Grid<ReadSubscriptionWithUserSave> getSubscriptionGrid() {
+        Grid<ReadSubscriptionWithUserSave> subscriptionDtoGrid = new Grid<>(ReadSubscriptionWithUserSave.class);
 
         subscriptionDtoGrid.setColumns("userFirstName", "userLastName", "startDate", "endDate", "price");
         subscriptionDtoGrid.asSingleSelect().addValueChangeListener(event -> getSinglePlan(subscriptionDtoGrid.asSingleSelect().getValue().getUserId()));

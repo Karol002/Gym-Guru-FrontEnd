@@ -1,8 +1,8 @@
 package com.gymguru.frontend.view.trainer;
 
 import com.gymguru.frontend.domain.enums.SubscriptionStatus;
-import com.gymguru.frontend.domain.SessionMemory;
-import com.gymguru.frontend.domain.SubscriptionWithUser;
+import com.gymguru.frontend.domain.authorization.SessionMemory;
+import com.gymguru.frontend.domain.read.ReadSubscriptionWithUserSave;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -11,7 +11,7 @@ import com.vaadin.flow.component.select.Select;
 public class TrainerSubscriptionsView extends VerticalLayout {
     private final SubscriptionService subscriptionService;
     private final SessionMemory sessionMemory;
-    private final Grid<SubscriptionWithUser> subscriptionDtoGrid;
+    private final Grid<ReadSubscriptionWithUserSave> subscriptionDtoGrid;
 
     public TrainerSubscriptionsView(SubscriptionService subscriptionService, SessionMemory sessionMemory) {
         this.subscriptionService = subscriptionService;
@@ -23,7 +23,7 @@ public class TrainerSubscriptionsView extends VerticalLayout {
         add(container);
     }
 
-    private VerticalLayout getContainer(Grid<SubscriptionWithUser> subscriptionDtoGrid, Select<SubscriptionStatus> subscriptionStatusSelect) {
+    private VerticalLayout getContainer(Grid<ReadSubscriptionWithUserSave> subscriptionDtoGrid, Select<SubscriptionStatus> subscriptionStatusSelect) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "83vh");
         container.getStyle().set("width", "100%");
@@ -46,8 +46,8 @@ public class TrainerSubscriptionsView extends VerticalLayout {
         return specializationSelect;
     }
 
-    private Grid<SubscriptionWithUser> getSubscriptionGrid() {
-        Grid<SubscriptionWithUser> subscriptionDtoGrid = new Grid<>(SubscriptionWithUser.class);
+    private Grid<ReadSubscriptionWithUserSave> getSubscriptionGrid() {
+        Grid<ReadSubscriptionWithUserSave> subscriptionDtoGrid = new Grid<>(ReadSubscriptionWithUserSave.class);
 
         subscriptionDtoGrid.setColumns("userFirstName", "userLastName", "startDate", "endDate", "price");
         subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsByTrainerId(sessionMemory.getId()));

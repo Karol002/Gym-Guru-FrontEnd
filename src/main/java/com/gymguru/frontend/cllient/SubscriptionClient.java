@@ -1,7 +1,7 @@
 package com.gymguru.frontend.cllient;
 
 import com.gymguru.frontend.config.BackendClientConfiguration;
-import com.gymguru.frontend.domain.edit.EditSubscription;
+import com.gymguru.frontend.domain.edit.SaveEditSubscription;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ public class SubscriptionClient {
     private final RestTemplate restTemplate;
     private final BackendClientConfiguration backendClientConfiguration;
 
-    public HttpStatus subscribe(EditSubscription editSubscription) throws HttpClientErrorException {
+    public HttpStatus subscribe(SaveEditSubscription editSubscription) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription())
                 .build()
                 .encode()
@@ -48,42 +48,42 @@ public class SubscriptionClient {
         return restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), Boolean.class).getBody();
     }
 
-    public EditSubscription getSubscriptionByUserId(Long userId) throws HttpClientErrorException  {
+    public SaveEditSubscription getSubscriptionByUserId(Long userId) throws HttpClientErrorException  {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription() + "/user/" + userId)
                 .build()
                 .encode()
                 .toUri();
 
-        return restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), EditSubscription.class).getBody();
+        return restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), SaveEditSubscription.class).getBody();
     }
 
-    public List<EditSubscription> getSubscriptionsWithoutPlanByTrainerId(Long trainerId) throws HttpClientErrorException  {
+    public List<SaveEditSubscription> getSubscriptionsWithoutPlanByTrainerId(Long trainerId) throws HttpClientErrorException  {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription() + "/without/plan/" + trainerId)
                 .build()
                 .encode()
                 .toUri();
 
         return List.of(Objects.requireNonNull(restTemplate.exchange
-                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), EditSubscription[].class).getBody()));
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), SaveEditSubscription[].class).getBody()));
     }
 
-    public List<EditSubscription> getSubscriptionsWithPlanByTrainerId(Long trainerId) throws HttpClientErrorException  {
+    public List<SaveEditSubscription> getSubscriptionsWithPlanByTrainerId(Long trainerId) throws HttpClientErrorException  {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription() + "/with/plan/" + trainerId)
                 .build()
                 .encode()
                 .toUri();
 
         return List.of(Objects.requireNonNull(restTemplate.exchange
-                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), EditSubscription[].class).getBody()));
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), SaveEditSubscription[].class).getBody()));
     }
 
-    public List<EditSubscription> getAllSubscriptionsByTrainerId(Long trainerId) throws HttpClientErrorException {
+    public List<SaveEditSubscription> getAllSubscriptionsByTrainerId(Long trainerId) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription() + "/trainer/" + trainerId)
                 .build()
                 .encode()
                 .toUri();
 
         return List.of(Objects.requireNonNull(restTemplate.exchange
-                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), EditSubscription[].class).getBody()));
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), SaveEditSubscription[].class).getBody()));
     }
 }

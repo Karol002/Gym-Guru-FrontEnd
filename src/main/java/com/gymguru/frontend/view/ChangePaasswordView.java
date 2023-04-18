@@ -1,7 +1,7 @@
 package com.gymguru.frontend.view;
 
 
-import com.gymguru.frontend.domain.SessionMemory;
+import com.gymguru.frontend.domain.authorization.SessionMemory;
 import com.gymguru.frontend.service.AuthService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;

@@ -1,6 +1,6 @@
 package com.gymguru.frontend.view;
 
-import com.gymguru.frontend.domain.SessionMemory;
+import com.gymguru.frontend.domain.authorization.SessionMemory;
 import com.gymguru.frontend.service.*;
 import com.gymguru.frontend.view.user.UserAccountView;
 import com.gymguru.frontend.view.user.UserBuyView;

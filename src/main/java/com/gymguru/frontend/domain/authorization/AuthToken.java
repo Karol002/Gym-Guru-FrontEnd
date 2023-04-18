@@ -1,4 +1,4 @@
-package com.gymguru.frontend.domain.read;
+package com.gymguru.frontend.domain.authorization;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReadAuthToken {
+public class AuthToken {
     @JsonProperty("token")
     private String token;
     @JsonProperty("role")

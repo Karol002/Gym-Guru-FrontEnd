@@ -6,8 +6,8 @@ import com.gymguru.frontend.domain.read.ReadEdamamMeal;
 import com.gymguru.frontend.domain.edit.EditUser;
 import com.gymguru.frontend.domain.read.ReadWgerCategory;
 import com.gymguru.frontend.domain.read.ReadWgerExercise;
-import com.gymguru.frontend.domain.SessionMemory;
-import com.gymguru.frontend.domain.SubscriptionWithUser;
+import com.gymguru.frontend.domain.authorization.SessionMemory;
+import com.gymguru.frontend.domain.read.ReadSubscriptionWithUserSave;
 import com.gymguru.frontend.service.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -46,7 +46,7 @@ public class TrainerPlanView extends VerticalLayout {
     private final Grid<ReadWgerExercise> exerciseDtoGrid;
     private final Grid<ReadEdamamMeal> mealDtoGrid;
     private final VerticalLayout mainContainer;
-    private Grid<SubscriptionWithUser> subscriptionDtoGrid;
+    private Grid<ReadSubscriptionWithUserSave> subscriptionDtoGrid;
     private EditUser editUser;
     private String dietDescription;
     private String trainingDescription;
@@ -80,7 +80,7 @@ public class TrainerPlanView extends VerticalLayout {
         add(mainContainer);
     }
 
-    private VerticalLayout getUsersContainer(Grid<SubscriptionWithUser> subscriptionDtoGrid) {
+    private VerticalLayout getUsersContainer(Grid<ReadSubscriptionWithUserSave> subscriptionDtoGrid) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "83vh");
         container.getStyle().set("width", "100%");
@@ -91,8 +91,8 @@ public class TrainerPlanView extends VerticalLayout {
         return container;
     }
 
-    private Grid<SubscriptionWithUser> getSubscriptionGrid() {
-        Grid<SubscriptionWithUser> subscriptionDtoGrid = new Grid<>(SubscriptionWithUser.class);
+    private Grid<ReadSubscriptionWithUserSave> getSubscriptionGrid() {
+        Grid<ReadSubscriptionWithUserSave> subscriptionDtoGrid = new Grid<>(ReadSubscriptionWithUserSave.class);
 
         subscriptionDtoGrid.setColumns("userFirstName", "startDate", "endDate", "price");
         subscriptionDtoGrid.getColumnByKey("userFirstName").setWidth("20%");
@@ -105,7 +105,7 @@ public class TrainerPlanView extends VerticalLayout {
 
     }
 
-    private void selectUser(SubscriptionWithUser subscriptionWithUser) {
+    private void selectUser(ReadSubscriptionWithUserSave subscriptionWithUser) {
         editUser = userService.getUserById(subscriptionWithUser.getUserId());
         mainContainer.removeAll();
         mainContainer.add(getMealContainer(mealDtoGrid, exerciseButton, findMealLayout));

@@ -1,6 +1,6 @@
 package com.gymguru.frontend.config;
 
-import com.gymguru.frontend.domain.SessionMemory;
+import com.gymguru.frontend.domain.authorization.SessionMemory;
 import com.vaadin.flow.server.VaadinSession;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

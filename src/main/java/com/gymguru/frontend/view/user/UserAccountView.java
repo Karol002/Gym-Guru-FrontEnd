@@ -1,9 +1,9 @@
 package com.gymguru.frontend.view.user;
 
 
-import com.gymguru.frontend.domain.edit.EditSubscription;
+import com.gymguru.frontend.domain.edit.SaveEditSubscription;
 import com.gymguru.frontend.domain.edit.EditUser;
-import com.gymguru.frontend.domain.SessionMemory;
+import com.gymguru.frontend.domain.authorization.SessionMemory;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.gymguru.frontend.service.UserService;
 import com.vaadin.flow.component.button.Button;
@@ -33,7 +33,7 @@ public class UserAccountView extends VerticalLayout {
     private TextField endSub;
     private TextField priceSub;
     private EditUser editUser;
-    private EditSubscription editSubscription;
+    private SaveEditSubscription editSubscription;
 
 
     @Autowired

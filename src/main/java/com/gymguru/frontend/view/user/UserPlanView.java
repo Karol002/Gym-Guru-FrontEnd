@@ -3,7 +3,7 @@ package com.gymguru.frontend.view.user;
 import com.gymguru.frontend.domain.edit.EditExercise;
 import com.gymguru.frontend.domain.edit.EditMeal;
 import com.gymguru.frontend.domain.edit.EditPlan;
-import com.gymguru.frontend.domain.SessionMemory;
+import com.gymguru.frontend.domain.authorization.SessionMemory;
 import com.gymguru.frontend.service.PlanService;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.vaadin.flow.component.grid.Grid;

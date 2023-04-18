@@ -1,9 +1,9 @@
 package com.gymguru.frontend.cllient;
 
 import com.gymguru.frontend.config.BackendClientConfiguration;
-import com.gymguru.frontend.domain.read.ReadAuthToken;
-import com.gymguru.frontend.domain.Credential;
-import com.gymguru.frontend.domain.PasswordChanger;
+import com.gymguru.frontend.domain.authorization.AuthToken;
+import com.gymguru.frontend.domain.authorization.Credential;
+import com.gymguru.frontend.domain.authorization.PasswordChanger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -19,13 +19,13 @@ import java.net.URI;
 public class AuthClient {
     private final RestTemplate restTemplate;
     private final BackendClientConfiguration backendClientConfiguration;
-    public ReadAuthToken getAuthToken(Credential credentials ) throws HttpClientErrorException {
+    public AuthToken getAuthToken(Credential credentials ) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getLogin())
                 .build()
                 .encode()
                 .toUri();
 
-        return restTemplate.postForObject(url, credentials, ReadAuthToken.class);
+        return restTemplate.postForObject(url, credentials, AuthToken.class);
     }
 
     public HttpStatus changePassword(PasswordChanger passwordChanger) throws HttpClientErrorException {

@@ -1,4 +1,4 @@
-package com.gymguru.frontend.domain;
+package com.gymguru.frontend.domain.authorization;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
