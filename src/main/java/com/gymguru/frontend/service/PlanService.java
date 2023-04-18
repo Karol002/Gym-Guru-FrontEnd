@@ -1,14 +1,14 @@
 package com.gymguru.frontend.service;
 
-import com.gymguru.frontend.domain.Exercise;
-import com.gymguru.frontend.domain.Meal;
-import com.gymguru.frontend.domain.Plan;
-import com.gymguru.frontend.domain.dto.ExerciseDto;
-import com.gymguru.frontend.domain.dto.MealDto;
-import com.gymguru.frontend.domain.dto.PlanDto;
-import com.gymguru.frontend.external.app.cllient.ExerciseClient;
-import com.gymguru.frontend.external.app.cllient.MealClient;
-import com.gymguru.frontend.external.app.cllient.PlanClient;
+import com.gymguru.frontend.cllient.ExerciseClient;
+import com.gymguru.frontend.cllient.MealClient;
+import com.gymguru.frontend.cllient.PlanClient;
+import com.gymguru.frontend.domain.edit.EditExercise;
+import com.gymguru.frontend.domain.edit.EditMeal;
+import com.gymguru.frontend.domain.edit.EditPlan;
+import com.gymguru.frontend.domain.save.SaveExercise;
+import com.gymguru.frontend.domain.save.SaveMeal;
+import com.gymguru.frontend.domain.save.SavePlan;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class PlanService {
     private final MealClient mealClient;
     private final Logger logger = LoggerFactory.getLogger(PlanService.class);
 
-    public Plan getPlan(Long userId) {
+    public EditPlan getPlan(Long userId) {
         try {
             return planClient.getPlan(userId);
         } catch (HttpClientErrorException e) {
@@ -36,17 +36,17 @@ public class PlanService {
         }
     }
 
-    public boolean createPlan(String dietDescription, String exerciseDescription, Long userId, Long trainerId, List<Exercise> exerciseDtos, List<Meal> mealDtos) {
+    public boolean createPlan(String dietDescription, String exerciseDescription, Long userId, Long trainerId, List<SaveExercise> saveExerciseDtos, List<SaveMeal> saveMealDtos) {
         try {
-            Plan plan = new Plan(dietDescription, exerciseDescription, userId, trainerId, exerciseDtos, mealDtos);
-            return planClient.createPlan(plan).is2xxSuccessful();
+            SavePlan savePlan = new SavePlan(dietDescription, exerciseDescription, userId, trainerId, saveExerciseDtos, saveMealDtos);
+            return planClient.createPlan(savePlan).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return false;
         }
     }
 
-    public Set<ExerciseDto> getExercisesByPlanId(Long planId) {
+    public Set<EditExercise> getExercisesByPlanId(Long planId) {
         try {
             return new HashSet<>(exerciseClient.getExercisesByPlanId(planId));
         } catch (HttpClientErrorException exception) {
@@ -55,7 +55,7 @@ public class PlanService {
         }
     }
 
-    public Set<MealDto> getMealsByPlanId(Long planId) {
+    public Set<EditMeal> getMealsByPlanId(Long planId) {
         try {
             return new HashSet<>(mealClient.getMealsByPlanId(planId));
         } catch (HttpClientErrorException exception) {
@@ -64,7 +64,7 @@ public class PlanService {
         }
     }
 
-    public boolean updateExercise(ExerciseDto exercise) {
+    public boolean updateExercise(EditExercise exercise) {
         try {
             return exerciseClient.updateExercise(exercise).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
@@ -73,18 +73,18 @@ public class PlanService {
         }
     }
 
-    public boolean updateMeal(MealDto mealDto) {
+    public boolean updateMeal(EditMeal editMeal) {
         try {
-            return mealClient.updateMeal(mealDto).is2xxSuccessful();
+            return mealClient.updateMeal(editMeal).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return false;
         }
     }
 
-    public boolean updatePlan(PlanDto planDto) {
+    public boolean updatePlan(EditPlan editPlan) {
         try {
-            return planClient.updatePlan(planDto).is2xxSuccessful();
+            return planClient.updatePlan(editPlan).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return false;

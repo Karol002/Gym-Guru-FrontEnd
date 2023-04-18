@@ -1,8 +1,8 @@
 package com.gymguru.frontend.service;
 
-import com.gymguru.frontend.domain.User;
-import com.gymguru.frontend.domain.UserAccount;
-import com.gymguru.frontend.external.app.cllient.UserClient;
+import com.gymguru.frontend.cllient.UserClient;
+import com.gymguru.frontend.domain.edit.EditUser;
+import com.gymguru.frontend.domain.save.SaveUserAccount;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,25 +17,25 @@ public class UserService {
 
     public boolean createUser(String email, String password, String firstName, String lastName) {
         try {
-            return userClient.createUser(new UserAccount(email, password, firstName, lastName)).is2xxSuccessful();
+            return userClient.createUser(new SaveUserAccount(email, password, firstName, lastName)).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return false;
         }
     }
 
-    public User getUserById(Long id) {
+    public EditUser getUserById(Long id) {
         try {
             return userClient.getUser(id);
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
-            return new User();
+            return new EditUser();
         }
     }
 
-    public boolean  updateUser(User user) {
+    public boolean  updateUser(EditUser editUser) {
         try {
-            return userClient.updateUser(user).is2xxSuccessful();
+            return userClient.updateUser(editUser).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return false;

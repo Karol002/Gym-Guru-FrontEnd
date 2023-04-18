@@ -1,7 +1,7 @@
 package com.gymguru.frontend.service;
 
-import com.gymguru.frontend.domain.dto.OpenAiMessageDto;
-import com.gymguru.frontend.external.app.cllient.OpenAiClient;
+import com.gymguru.frontend.cllient.OpenAiClient;
+import com.gymguru.frontend.domain.save.SaveOpenAiMessage;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +15,10 @@ public class OpenAiService {
     private final Logger logger = LoggerFactory.getLogger(OpenAiClient.class);
 
     public String getAiResponse(String message) {
-        OpenAiMessageDto openAiMessageDto = new OpenAiMessageDto(message);
+        SaveOpenAiMessage saveOpenAiMessage = new SaveOpenAiMessage(message);
 
         try {
-            return openAiClient.getResponse(openAiMessageDto);
+            return openAiClient.getResponse(saveOpenAiMessage);
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return "OpenAi api error";

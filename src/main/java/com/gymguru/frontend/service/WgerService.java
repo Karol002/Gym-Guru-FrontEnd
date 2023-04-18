@@ -1,8 +1,8 @@
 package com.gymguru.frontend.service;
 
-import com.gymguru.frontend.domain.WgerCategory;
-import com.gymguru.frontend.domain.WgerExercise;
-import com.gymguru.frontend.external.app.cllient.WgerClient;
+import com.gymguru.frontend.cllient.WgerClient;
+import com.gymguru.frontend.domain.read.ReadWgerCategory;
+import com.gymguru.frontend.domain.read.ReadWgerExercise;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class WgerService {
     private final WgerClient wgerClient;
     private final Logger logger = LoggerFactory.getLogger(WgerService.class);
 
-    public List<WgerCategory> getCategories() {
+    public List<ReadWgerCategory> getCategories() {
         try {
             return wgerClient.getCategories();
         } catch (HttpClientErrorException exception) {
@@ -29,7 +29,7 @@ public class WgerService {
         }
     }
 
-    public Set<WgerExercise> getExercises(Long categoryId) {
+    public Set<ReadWgerExercise> getExercises(Long categoryId) {
         try {
             return new HashSet<>(wgerClient.getExercises(categoryId));
         } catch (HttpClientErrorException exception) {

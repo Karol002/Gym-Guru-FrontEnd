@@ -1,9 +1,9 @@
 package com.gymguru.frontend.view.trainer;
 
-import com.gymguru.frontend.domain.Exercise;
-import com.gymguru.frontend.domain.Meal;
-import com.gymguru.frontend.domain.WgerExercise;
-import com.gymguru.frontend.domain.dto.EdamamMeal;
+import com.gymguru.frontend.domain.read.ReadEdamamMeal;
+import com.gymguru.frontend.domain.read.ReadWgerExercise;
+import com.gymguru.frontend.domain.save.SaveExercise;
+import com.gymguru.frontend.domain.save.SaveMeal;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Label;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TrainerDialogCreator {
 
-    public Dialog getMealDialog(List<Meal> meals, EdamamMeal edamamMeal, Button exerciseButton) {
+    public Dialog getMealDialog(List<SaveMeal> saveMeals, ReadEdamamMeal readEdamamMeal, Button exerciseButton) {
         Dialog dialog = new Dialog();
         VerticalLayout dialogLayout = new VerticalLayout();
         dialogLayout.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -25,7 +25,7 @@ public class TrainerDialogCreator {
         infoLabel.setWidthFull();
 
         Button confirmButton = new Button("Confirm", event1 -> {
-            meals.add(new Meal(edamamMeal.getLabel(), edamamMeal.getIngredientLines()));
+            saveMeals.add(new SaveMeal(readEdamamMeal.getLabel(), readEdamamMeal.getIngredientLines()));
             exerciseButton.setVisible(true);
             dialog.close();
         });
@@ -44,7 +44,7 @@ public class TrainerDialogCreator {
         return dialog;
     }
 
-    public Dialog getExerciseDialog(List<Exercise> exercises, WgerExercise wgerExercise, Button finishButton) {
+    public Dialog getExerciseDialog(List<SaveExercise> saveExercises, ReadWgerExercise readWgerExercise, Button finishButton) {
         Dialog dialog = new Dialog();
         VerticalLayout dialogLayout = new VerticalLayout();
         dialogLayout.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -79,7 +79,7 @@ public class TrainerDialogCreator {
                     && repetitionsField.getValue() <= repetitionsField.getMax()
                     && seriesField.getValue() <= seriesField.getMax()) {
                 dialog.close();
-                exercises.add(new Exercise(wgerExercise.getName(), wgerExercise.getDescription(), seriesField.getValue(), repetitionsField.getValue()));
+                saveExercises.add(new SaveExercise(readWgerExercise.getName(), readWgerExercise.getDescription(), seriesField.getValue(), repetitionsField.getValue()));
                 finishButton.setVisible(true);
             }
 

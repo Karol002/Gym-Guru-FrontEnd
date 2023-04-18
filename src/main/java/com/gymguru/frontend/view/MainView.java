@@ -1,6 +1,6 @@
 package com.gymguru.frontend.view;
 
-import com.gymguru.frontend.domain.Trainer;
+import com.gymguru.frontend.domain.edit.EditTrainer;
 import com.gymguru.frontend.service.OpenAiService;
 import com.gymguru.frontend.service.TrainerService;
 import com.vaadin.flow.component.UI;
@@ -79,16 +79,16 @@ public class MainView extends VerticalLayout {
         return trainers;
     }
 
-    private Grid<Trainer> getTrainersGird() {
-        Grid<Trainer> trainerGrid = new Grid<>(Trainer.class);
+    private Grid<EditTrainer> getTrainersGird() {
+        Grid<EditTrainer> trainerGrid = new Grid<>(EditTrainer.class);
 
         trainerGrid.setColumns("firstName", "lastName");
-        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.education]]</div>")
-                        .withProperty("education", Trainer::getEducation))
+        trainerGrid.addColumn(TemplateRenderer.<EditTrainer>of("<div style='white-space: normal'>[[item.education]]</div>")
+                        .withProperty("education", EditTrainer::getEducation))
                 .setHeader("Education")
                 .setFlexGrow(30);
-        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.description]]</div>")
-                        .withProperty("description", Trainer::getDescription))
+        trainerGrid.addColumn(TemplateRenderer.<EditTrainer>of("<div style='white-space: normal'>[[item.description]]</div>")
+                        .withProperty("description", EditTrainer::getDescription))
                 .setHeader("Description")
                 .setFlexGrow(50);
         trainerGrid.getColumnByKey("firstName").setWidth("10%");
@@ -205,7 +205,7 @@ public class MainView extends VerticalLayout {
         return gymImage;
     }
 
-    private void refresh(Grid<Trainer> trainerGrid, TrainerService trainerService) {
+    private void refresh(Grid<EditTrainer> trainerGrid, TrainerService trainerService) {
         trainerGrid.setItems(trainerService.getTrainers());
     }
 

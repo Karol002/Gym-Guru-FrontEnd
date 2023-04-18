@@ -1,8 +1,8 @@
 package com.gymguru.frontend.view.user;
 
-import com.gymguru.frontend.domain.enums.Specialization;
 import com.gymguru.frontend.domain.SessionMemory;
-import com.gymguru.frontend.domain.Trainer;
+import com.gymguru.frontend.domain.edit.EditTrainer;
+import com.gymguru.frontend.domain.enums.Specialization;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.gymguru.frontend.service.TrainerService;
 import com.vaadin.flow.component.button.Button;
@@ -24,7 +24,7 @@ public class UserBuyView extends VerticalLayout {
     private final SessionMemory sessionMemory;
     private final VerticalLayout container;
     private final Select<Specialization> specializationSelect;
-    private Grid<Trainer> trainerGrid;
+    private Grid<EditTrainer> trainerGrid;
 
     public UserBuyView(TrainerService trainerService, SubscriptionService subscriptionService, SessionMemory sessionMemory) {
         this.trainerService = trainerService;
@@ -37,7 +37,7 @@ public class UserBuyView extends VerticalLayout {
         add(container);
     }
 
-    private VerticalLayout getContainer(Grid<Trainer> trainerGrid, Select<Specialization> specializationSelect) {
+    private VerticalLayout getContainer(Grid<EditTrainer> trainerGrid, Select<Specialization> specializationSelect) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "83vh");
         container.getStyle().set("width", "100%");
@@ -46,7 +46,7 @@ public class UserBuyView extends VerticalLayout {
         return container;
     }
 
-    private Grid<Trainer> selectGrid() {
+    private Grid<EditTrainer> selectGrid() {
         if (subscriptionService.checkStatus(sessionMemory.getId())) {
             return  getTrainersGridWithActiveSubscribe();
         } else  return getTrainersGridWithInactiveSubscription();
@@ -66,21 +66,21 @@ public class UserBuyView extends VerticalLayout {
         return specializationSelect;
     }
 
-    private Grid<Trainer> getTrainersGridWithInactiveSubscription() {
-        Grid<Trainer> trainerGrid = new Grid<>(Trainer.class);
+    private Grid<EditTrainer> getTrainersGridWithInactiveSubscription() {
+        Grid<EditTrainer> trainerGrid = new Grid<>(EditTrainer.class);
         trainerGrid.setColumns("firstName", "specialization");
         trainerGrid.setItems(trainerService.getTrainers());
         trainerGrid.getColumnByKey("firstName").setWidth("5%");
         trainerGrid.getColumnByKey("specialization").setWidth("10%");
 
-        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.education]]</div>")
-                        .withProperty("education", Trainer::getEducation))
+        trainerGrid.addColumn(TemplateRenderer.<EditTrainer>of("<div style='white-space: normal'>[[item.education]]</div>")
+                        .withProperty("education", EditTrainer::getEducation))
                 .setHeader("Education")
                 .setWidth("25%")
                 .setFlexGrow(0);
 
-        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.description]]</div>")
-                        .withProperty("description", Trainer::getDescription))
+        trainerGrid.addColumn(TemplateRenderer.<EditTrainer>of("<div style='white-space: normal'>[[item.description]]</div>")
+                        .withProperty("description", EditTrainer::getDescription))
                 .setHeader("Description")
                 .setWidth("40%")
                 .setFlexGrow(0);
@@ -91,7 +91,7 @@ public class UserBuyView extends VerticalLayout {
     }
 
 
-    private Button createBuyButton(Trainer trainer) {
+    private Button createBuyButton(EditTrainer editTrainer) {
         Button buyButton = new Button("Subscribe", event -> {
             Dialog dialog = new Dialog();
             VerticalLayout dialogLayout = new VerticalLayout();
@@ -100,7 +100,7 @@ public class UserBuyView extends VerticalLayout {
 
             Label infoLabel = new Label("Subscription costs for chosen trainer");
             infoLabel.setWidthFull();
-            Label costLabel = new Label("For month: " + trainer.getMonthPrice().toString() + "$");
+            Label costLabel = new Label("For month: " + editTrainer.getMonthPrice().toString() + "$");
             costLabel.setWidthFull();
 
             Select<Integer> subscriptionLengthSelect = new Select<>();
@@ -113,9 +113,9 @@ public class UserBuyView extends VerticalLayout {
 
             Button confirmButton = new Button("Confirm", event1 -> {
                 if (!subscriptionLengthSelect.isEmpty()) {
-                    if (subscriptionService.subscribe(subscriptionLengthSelect.getValue() , trainer.getMonthPrice(),
+                    if (subscriptionService.subscribe(subscriptionLengthSelect.getValue() , editTrainer.getMonthPrice(),
                             LocalDate.now(), LocalDate.now().plusMonths(subscriptionLengthSelect.getValue()),
-                            sessionMemory.getId(), trainer.getId())) {
+                            sessionMemory.getId(), editTrainer.getId())) {
                         Notification.show("Successfully bought");
                         changeGridAfterBuy();
                     }
@@ -135,7 +135,7 @@ public class UserBuyView extends VerticalLayout {
 
             subscriptionLengthSelect.addValueChangeListener(event2 -> {
                 int subscriptionLength = event2.getValue();
-                BigDecimal price = trainer.getMonthPrice().multiply(BigDecimal.valueOf(subscriptionLength));
+                BigDecimal price = editTrainer.getMonthPrice().multiply(BigDecimal.valueOf(subscriptionLength));
                 priceLabel.setText("Full price: " + price.toPlainString() + "$");
             });
 
@@ -158,21 +158,21 @@ public class UserBuyView extends VerticalLayout {
         return buyButton;
     }
 
-    private Grid<Trainer> getTrainersGridWithActiveSubscribe() {
-        Grid<Trainer> trainerGrid = new Grid<>(Trainer.class);
+    private Grid<EditTrainer> getTrainersGridWithActiveSubscribe() {
+        Grid<EditTrainer> trainerGrid = new Grid<>(EditTrainer.class);
 
         trainerGrid.setColumns("firstName", "specialization");
         trainerGrid.setItems(trainerService.getTrainers());
         trainerGrid.getColumnByKey("firstName").setWidth("5%");
         trainerGrid.getColumnByKey("specialization").setWidth("10%");
 
-        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.education]]</div>")
-                        .withProperty("education", Trainer::getEducation))
+        trainerGrid.addColumn(TemplateRenderer.<EditTrainer>of("<div style='white-space: normal'>[[item.education]]</div>")
+                        .withProperty("education", EditTrainer::getEducation))
                 .setHeader("Education")
                 .setWidth("25%")
                 .setFlexGrow(0);
-        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.description]]</div>")
-                        .withProperty("description", Trainer::getDescription))
+        trainerGrid.addColumn(TemplateRenderer.<EditTrainer>of("<div style='white-space: normal'>[[item.description]]</div>")
+                        .withProperty("description", EditTrainer::getDescription))
                 .setHeader("Description")
                 .setWidth("40%")
                 .setFlexGrow(0);

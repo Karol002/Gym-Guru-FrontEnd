@@ -1,10 +1,10 @@
 package com.gymguru.frontend.service;
 
-import com.gymguru.frontend.domain.Subscription;
-import com.gymguru.frontend.domain.dto.SubscriptionWithUser;
-import com.gymguru.frontend.domain.User;
-import com.gymguru.frontend.external.app.cllient.SubscriptionClient;
-import com.gymguru.frontend.external.app.cllient.UserClient;
+import com.gymguru.frontend.cllient.SubscriptionClient;
+import com.gymguru.frontend.cllient.UserClient;
+import com.gymguru.frontend.domain.SubscriptionWithUser;
+import com.gymguru.frontend.domain.edit.EditSubscription;
+import com.gymguru.frontend.domain.edit.EditUser;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class SubscriptionService {
 
     public boolean subscribe(Integer sublength, BigDecimal price, LocalDate startDate, LocalDate endDate, Long userId, Long trainerId) {
         try {
-            return subscriptionClient.subscribe(new Subscription(price.multiply(BigDecimal.valueOf(sublength)), startDate, endDate, userId, trainerId)).is2xxSuccessful();
+            return subscriptionClient.subscribe(new EditSubscription(price.multiply(BigDecimal.valueOf(sublength)), startDate, endDate, userId, trainerId)).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return false;
@@ -35,8 +35,8 @@ public class SubscriptionService {
 
     public Set<SubscriptionWithUser> getSubscriptionsWithPlanByTrainerId(Long trainerId) {
         try {
-            List<Subscription> subscriptions = subscriptionClient.getSubscriptionsWithPlanByTrainerId(trainerId);
-            return new HashSet<>(mapToSubscriptionWithUsers(subscriptions));
+            List<EditSubscription> editSubscriptions = subscriptionClient.getSubscriptionsWithPlanByTrainerId(trainerId);
+            return new HashSet<>(mapToSubscriptionWithUsers(editSubscriptions));
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return Collections.emptySet();
@@ -46,8 +46,8 @@ public class SubscriptionService {
 
     public Set<SubscriptionWithUser> getSubscriptionsWithOutPlanByTrainerId(Long trainerId) {
         try {
-            List<Subscription> subscriptions = subscriptionClient.getSubscriptionsWithoutPlanByTrainerId(trainerId);
-            return new HashSet<>(mapToSubscriptionWithUsers(subscriptions));
+            List<EditSubscription> editSubscriptions = subscriptionClient.getSubscriptionsWithoutPlanByTrainerId(trainerId);
+            return new HashSet<>(mapToSubscriptionWithUsers(editSubscriptions));
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return Collections.emptySet();
@@ -56,8 +56,8 @@ public class SubscriptionService {
 
     public Set<SubscriptionWithUser> getSubscriptionsByTrainerId(Long trainerId) {
         try {
-            List<Subscription> subscriptions = subscriptionClient.getAllSubscriptionsByTrainerId(trainerId);
-            return new HashSet<>(mapToSubscriptionWithUsers(subscriptions));
+            List<EditSubscription> editSubscriptions = subscriptionClient.getAllSubscriptionsByTrainerId(trainerId);
+            return new HashSet<>(mapToSubscriptionWithUsers(editSubscriptions));
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return Collections.emptySet();
@@ -81,17 +81,17 @@ public class SubscriptionService {
         }
     }
 
-    public Subscription getSubscription(Long userId) {
+    public EditSubscription getSubscription(Long userId) {
         try {
             return subscriptionClient.getSubscriptionByUserId(userId);
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
-            return new Subscription();
+            return new EditSubscription();
         }
     }
 
-    public long getMaxExtendSubscription(Subscription subscription) {
-        long mothDifference = monthsBetween(subscription.getStartDate(), subscription.getEndDate());
+    public long getMaxExtendSubscription(EditSubscription editSubscription) {
+        long mothDifference = monthsBetween(editSubscription.getStartDate(), editSubscription.getEndDate());
         return (MAX_SUB_TIME_IN_MONTH - mothDifference);
     }
 
@@ -105,18 +105,18 @@ public class SubscriptionService {
         return subscriptionLengthList;
     }
 
-    private List<SubscriptionWithUser> mapToSubscriptionWithUsers(List<Subscription> subscriptions) {
+    private List<SubscriptionWithUser> mapToSubscriptionWithUsers(List<EditSubscription> editSubscriptions) {
         List<SubscriptionWithUser> subscriptionsWithUser = new ArrayList<>();
-        for (Subscription subscription : subscriptions) {
-            User user = userClient.getUser(subscription.getUserId());
+        for (EditSubscription editSubscription : editSubscriptions) {
+            EditUser editUser = userClient.getUser(editSubscription.getUserId());
             subscriptionsWithUser.add(new SubscriptionWithUser(
-                    subscription.getPrice(),
-                    subscription.getStartDate(),
-                    subscription.getEndDate(),
-                    subscription.getUserId(),
-                    subscription.getTrainerId(),
-                    user.getFirstName(),
-                    user.getLastName()
+                    editSubscription.getPrice(),
+                    editSubscription.getStartDate(),
+                    editSubscription.getEndDate(),
+                    editSubscription.getUserId(),
+                    editSubscription.getTrainerId(),
+                    editUser.getFirstName(),
+                    editUser.getLastName()
             ));
         }
 

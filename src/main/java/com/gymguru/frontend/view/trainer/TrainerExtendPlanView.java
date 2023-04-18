@@ -1,8 +1,10 @@
 package com.gymguru.frontend.view.trainer;
 
-import com.gymguru.frontend.domain.Plan;
 import com.gymguru.frontend.domain.SessionMemory;
-import com.gymguru.frontend.domain.dto.*;
+import com.gymguru.frontend.domain.SubscriptionWithUser;
+import com.gymguru.frontend.domain.edit.EditExercise;
+import com.gymguru.frontend.domain.edit.EditMeal;
+import com.gymguru.frontend.domain.edit.EditPlan;
 import com.gymguru.frontend.service.PlanService;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.vaadin.flow.component.button.Button;
@@ -22,7 +24,7 @@ public class TrainerExtendPlanView extends VerticalLayout {
     private final PlanService planService;
     private final SessionMemory sessionMemory;
     private final VerticalLayout container;
-    private Plan plan;
+    private EditPlan editPlan;
 
     public TrainerExtendPlanView(SubscriptionService subscriptionService, SessionMemory sessionMemory, PlanService planService) {
         this.subscriptionService = subscriptionService;
@@ -47,32 +49,31 @@ public class TrainerExtendPlanView extends VerticalLayout {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "80vh");
         container.getStyle().set("width", "100%");
-        Grid<ExerciseDto> exerciseGrid = getExerciseGird();
-        Grid<MealDto> mealGrid = getMealGrid();
+        Grid<EditExercise> exerciseGrid = getExerciseGird();
+        Grid<EditMeal> mealGrid = getMealGrid();
         container.add(trainingLayout, exerciseGrid, dietLayout, mealGrid);
 
         return container;
     }
 
-
-    private Grid<ExerciseDto> getExerciseGird() {
-        Grid<ExerciseDto> exerciseGrid = new Grid<>(ExerciseDto.class);
+    private Grid<EditExercise> getExerciseGird() {
+        Grid<EditExercise> exerciseGrid = new Grid<>(EditExercise.class);
 
         exerciseGrid.setColumns("name", "seriesQuantity", "repetitionsQuantity");
         exerciseGrid.getColumnByKey("name").setWidth("20%");
         exerciseGrid.getColumnByKey("seriesQuantity").setWidth("15%");
         exerciseGrid.getColumnByKey("repetitionsQuantity").setWidth("15%");
-        exerciseGrid.addColumn(TemplateRenderer.<ExerciseDto>of("<div style='white-space: normal'>[[item.description]]</div>")
-                        .withProperty("description", ExerciseDto::getDescription))
+        exerciseGrid.addColumn(TemplateRenderer.<EditExercise>of("<div style='white-space: normal'>[[item.description]]</div>")
+                        .withProperty("description", EditExercise::getDescription))
                 .setHeader("Description")
                 .setFlexGrow(50);
 
         exerciseGrid.asSingleSelect().addValueChangeListener(event -> editExercise(exerciseGrid.asSingleSelect().getValue()));
-        exerciseGrid.setItems(planService.getExercisesByPlanId(plan.getId()));
+        exerciseGrid.setItems(planService.getExercisesByPlanId(editPlan.getId()));
         return exerciseGrid;
     }
 
-    private void editExercise(ExerciseDto exercise) {
+    private void editExercise(EditExercise exercise) {
         Dialog dialog = new Dialog();
         VerticalLayout dialogLayout = new VerticalLayout();
         dialogLayout.setAlignItems(Alignment.CENTER);
@@ -116,15 +117,14 @@ public class TrainerExtendPlanView extends VerticalLayout {
                     && seriesField.getValue() <= seriesField.getMax()
                     && !descriptionArea.isEmpty() && !exerciseNameField.isEmpty()) {
 
-                if (planService.updateExercise(new ExerciseDto(
+                if (planService.updateExercise(new EditExercise(
                         exercise.getId(), exerciseNameField.getValue(), descriptionArea.getValue(),
-                        repetitionsField.getValue(), seriesField.getValue(), plan.getId()))) {
+                        repetitionsField.getValue(), seriesField.getValue(), editPlan.getId()))) {
                     Notification.show("Successful update exercise");
                 } else Notification.show("Error update exercise");
 
                 dialog.close();
-                getSinglePlan(plan.getUserId());
-                Notification.show("Successful update exercise");
+                getSinglePlan(editPlan.getUserId());
             }
 
         });
@@ -142,21 +142,21 @@ public class TrainerExtendPlanView extends VerticalLayout {
         dialog.open();
     }
 
-    private Grid<MealDto> getMealGrid() {
-        Grid<MealDto> mealGrid = new Grid<>(MealDto.class);
+    private Grid<EditMeal> getMealGrid() {
+        Grid<EditMeal> mealGrid = new Grid<>(EditMeal.class);
 
         mealGrid.setColumns("name");
         mealGrid.getColumnByKey("name").setWidth("20%");
-        mealGrid.addColumn(TemplateRenderer.<MealDto>of("<div style='white-space: normal'>[[item.cookInstruction]]</div>")
-                        .withProperty("cookInstruction", MealDto::getCookInstruction))
+        mealGrid.addColumn(TemplateRenderer.<EditMeal>of("<div style='white-space: normal'>[[item.cookInstruction]]</div>")
+                        .withProperty("cookInstruction", EditMeal::getCookInstruction))
                 .setHeader("Cook Instruction")
                 .setFlexGrow(80);
         mealGrid.asSingleSelect().addValueChangeListener(event -> editMeal(mealGrid.asSingleSelect().getValue()));
-        mealGrid.setItems(planService.getMealsByPlanId(plan.getId()));
+        mealGrid.setItems(planService.getMealsByPlanId(editPlan.getId()));
         return mealGrid;
     }
 
-    private void editMeal(MealDto mealDto) {
+    private void editMeal(EditMeal editMeal) {
         Dialog dialog = new Dialog();
         VerticalLayout dialogLayout = new VerticalLayout();
         dialogLayout.setAlignItems(Alignment.CENTER);
@@ -167,22 +167,21 @@ public class TrainerExtendPlanView extends VerticalLayout {
 
         TextField mealNameField = new TextField();
         mealNameField.setWidth("400px");
-        mealNameField.setValue(mealDto.getName());
+        mealNameField.setValue(editMeal.getName());
 
         TextArea cookInstructionArea = new TextArea();
-        cookInstructionArea.setValue(mealDto.getCookInstruction());
+        cookInstructionArea.setValue(editMeal.getCookInstruction());
         cookInstructionArea.setWidthFull();
 
         Button confirmButton = new Button("Confirm", event1 -> {
             if (!cookInstructionArea.isEmpty() && !mealNameField.isEmpty()) {
-                if (planService.updateMeal(new MealDto(
-                        mealDto.getId(), mealNameField.getValue(), cookInstructionArea.getValue(), plan.getId()))) {
+                if (planService.updateMeal(new EditMeal(
+                        editMeal.getId(), mealNameField.getValue(), cookInstructionArea.getValue(), editPlan.getId()))) {
                     Notification.show("Successful update diet");
                 } else  Notification.show("Error update diet");
 
                 dialog.close();
-                getSinglePlan(plan.getUserId());
-                Notification.show("Successful update diet");
+                getSinglePlan(editPlan.getUserId());
             }
 
         });
@@ -210,14 +209,14 @@ public class TrainerExtendPlanView extends VerticalLayout {
     }
 
     private void getSinglePlan(Long userId) {
-        plan = planService.getPlan(userId);
+        editPlan = planService.getPlan(userId);
         container.removeAll();
         container.add(getContainer(getTrainingLayout(), getDietLayout()));
     }
 
     private TextArea getTrainingDescriptionArea() {
         TextArea trainingDescriptionArea = new TextArea();
-        trainingDescriptionArea.setValue(plan.getExerciseDescription());
+        trainingDescriptionArea.setValue(editPlan.getExerciseDescription());
         trainingDescriptionArea.setWidthFull();
         trainingDescriptionArea.setReadOnly(true);
 
@@ -228,7 +227,7 @@ public class TrainerExtendPlanView extends VerticalLayout {
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setWidthFull();
         TextArea trainingArea = getTrainingDescriptionArea();
-        Button saveButton = getTrainingSaveButton(plan.getDietDescription(), trainingArea);
+        Button saveButton = getTrainingSaveButton(editPlan.getDietDescription(), trainingArea);
         Button trainingButton = getUpdateTrainigDescriptionButton(trainingArea, saveButton);
         horizontalLayout.add(trainingArea, trainingButton, saveButton);
 
@@ -256,7 +255,7 @@ public class TrainerExtendPlanView extends VerticalLayout {
 
     private TextArea getMealDescriptionArea() {
         TextArea mealDescriptionArea = new TextArea();
-        mealDescriptionArea.setValue(plan.getDietDescription());
+        mealDescriptionArea.setValue(editPlan.getDietDescription());
         mealDescriptionArea.setWidthFull();
         mealDescriptionArea.setReadOnly(true);
 
@@ -267,7 +266,7 @@ public class TrainerExtendPlanView extends VerticalLayout {
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setWidthFull();
         TextArea dietArea = getMealDescriptionArea();
-        Button saveButton = getDietSaveButton(dietArea, plan.getExerciseDescription());
+        Button saveButton = getDietSaveButton(dietArea, editPlan.getExerciseDescription());
         Button dietButton = getUpdateDietDescriptionButton(dietArea, saveButton);
         horizontalLayout.add(dietArea, dietButton, saveButton);
 
@@ -305,10 +304,10 @@ public class TrainerExtendPlanView extends VerticalLayout {
         saveButton.setVisible(false);
 
         saveButton.addClickListener(event -> {
-            if (planService.updatePlan(new PlanDto(plan.getId(), dietDescription, planDescription.getValue(), plan.getUserId(), plan.getTrainerId()))) {
+            if (planService.updatePlan(new EditPlan(editPlan.getId(), dietDescription, planDescription.getValue(), editPlan.getUserId(), editPlan.getTrainerId()))) {
                 Notification.show("Successful update training instructions");
             } else Notification.show("Error update training instructions");
-            getSinglePlan(plan.getUserId());
+            getSinglePlan(editPlan.getUserId());
         });
 
         return saveButton;
@@ -326,10 +325,10 @@ public class TrainerExtendPlanView extends VerticalLayout {
         saveButton.setVisible(false);
 
         saveButton.addClickListener(event -> {
-            if (planService.updatePlan(new PlanDto(plan.getId(), dietDescription.getValue(), planDescription, plan.getUserId(), plan.getTrainerId()))) {
+            if (planService.updatePlan(new EditPlan(editPlan.getId(), dietDescription.getValue(), planDescription, editPlan.getUserId(), editPlan.getTrainerId()))) {
                 Notification.show("Successful update cook instruction");
             } else Notification.show("Error update cook instruction");
-            getSinglePlan(plan.getUserId());
+            getSinglePlan(editPlan.getUserId());
         });
 
         return saveButton;

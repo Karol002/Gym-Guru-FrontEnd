@@ -1,10 +1,10 @@
 package com.gymguru.frontend.service;
 
-import com.gymguru.frontend.domain.AuthToken;
-import com.gymguru.frontend.domain.dto.Credential;
-import com.gymguru.frontend.domain.dto.PasswordChanger;
+import com.gymguru.frontend.cllient.AuthClient;
+import com.gymguru.frontend.domain.Credential;
+import com.gymguru.frontend.domain.PasswordChanger;
 import com.gymguru.frontend.domain.SessionMemory;
-import com.gymguru.frontend.external.app.cllient.AuthClient;
+import com.gymguru.frontend.domain.read.ReadAuthToken;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinSession;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class AuthService {
     public boolean signIn(String email, String password) {
         Credential credential = new Credential(email, password);
         try {
-            AuthToken token = authClient.getAuthToken(credential);
+            ReadAuthToken token = authClient.getAuthToken(credential);
             if (token == null) {
                 return false;
             } else {
