@@ -67,7 +67,7 @@ public class TrainerView extends AppLayout {
         Tabs tabs = new Tabs(
                 new Tab("Home"),
                 new Tab("Create a plan"),
-                new Tab("My plans"),
+                new Tab("Edit plans"),
                 new Tab("My Subscribers"),
                 new Tab("My Data"),
                 new Tab("Change password"),
@@ -94,7 +94,7 @@ public class TrainerView extends AppLayout {
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("My plans")) {
+            if (selectedTab.getLabel().equals("Edit plans")) {
                 setContent(new TrainerExtendPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemory.class), planService));
             }
         });
