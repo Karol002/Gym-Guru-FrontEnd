@@ -1,7 +1,7 @@
 package com.gymguru.frontend.view.trainer;
 
-import com.gymguru.frontend.domain.dto.SessionMemoryDto;
-import com.gymguru.frontend.domain.dto.TrainerDto;
+import com.gymguru.frontend.domain.SessionMemory;
+import com.gymguru.frontend.domain.Trainer;
 import com.gymguru.frontend.service.TrainerService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 
 public class TrainerAccountView extends VerticalLayout {
     private final TrainerService trainerService;
-    private final SessionMemoryDto sessionMemoryDto;
+    private final SessionMemory sessionMemory;
     private final TextField firstNameField;
     private final TextField lastNameField;
     private final TextArea educationArea;
@@ -22,15 +22,15 @@ public class TrainerAccountView extends VerticalLayout {
     private final NumberField monthPriceField;
     private final Button editButton;
     private final Button saveButton;
-    private TrainerDto trainerDto;
+    private Trainer trainer;
 
-    public TrainerAccountView(TrainerService trainerService, SessionMemoryDto sessionMemoryDto) {
+    public TrainerAccountView(TrainerService trainerService, SessionMemory sessionMemory) {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
         this.trainerService = trainerService;
-        this.sessionMemoryDto = sessionMemoryDto;
-        trainerDto = trainerService.getTrainer(sessionMemoryDto.getId());
+        this.sessionMemory = sessionMemory;
+        trainer = trainerService.getTrainer(sessionMemory.getId());
 
         TextField emailField = getEmailField();
         firstNameField = getFirstNameField();
@@ -82,7 +82,7 @@ public class TrainerAccountView extends VerticalLayout {
                 firstNameField.setReadOnly(true); lastNameField.setReadOnly(true);
                 descriptionArea.setReadOnly(true); educationArea.setReadOnly(true);
                 monthPriceField.setReadOnly(true);
-                trainerDto = trainerService.getTrainer(sessionMemoryDto.getId());
+                trainer = trainerService.getTrainer(sessionMemory.getId());
                 Notification.show("Successful change data");
             }
         });
@@ -91,19 +91,19 @@ public class TrainerAccountView extends VerticalLayout {
 
     private boolean updateUser() {
         if (monthPriceField.getValue() >= monthPriceField.getMin() && monthPriceField.getValue() <= monthPriceField.getMax()) {
-            trainerDto.setFirstName(firstNameField.getValue());
-            trainerDto.setLastName(lastNameField.getValue());
-            trainerDto.setDescription(descriptionArea.getValue());
-            trainerDto.setEducation(educationArea.getValue());
-            trainerDto.setMonthPrice(BigDecimal.valueOf(monthPriceField.getValue()));
-            return trainerService.updateTrainer(trainerDto);
+            trainer.setFirstName(firstNameField.getValue());
+            trainer.setLastName(lastNameField.getValue());
+            trainer.setDescription(descriptionArea.getValue());
+            trainer.setEducation(educationArea.getValue());
+            trainer.setMonthPrice(BigDecimal.valueOf(monthPriceField.getValue()));
+            return trainerService.updateTrainer(trainer);
         } else return false;
     }
 
     private TextField getSpecialzationField() {
         TextField specializationField = new TextField();
         specializationField.setLabel("Specialization");
-        specializationField.setValue(trainerDto.getSpecialization().toString());
+        specializationField.setValue(trainer.getSpecialization().toString());
         specializationField.setWidth("400px");
         specializationField.setMaxWidth("100%");
         specializationField.setReadOnly(true);
@@ -116,7 +116,7 @@ public class TrainerAccountView extends VerticalLayout {
         priceSub.setLabel("Your monthly price in $");
         priceSub.setMax(100);
         priceSub.setMin(20);
-        priceSub.setValue(trainerDto.getMonthPrice().doubleValue());
+        priceSub.setValue(trainer.getMonthPrice().doubleValue());
         priceSub.setReadOnly(true);
         priceSub.setWidth("400px");
         priceSub.setMaxWidth("100%");
@@ -127,7 +127,7 @@ public class TrainerAccountView extends VerticalLayout {
     private TextField getLastNameField() {
         TextField lastNameField = new TextField();
         lastNameField.setLabel("Last Name");
-        lastNameField.setValue(trainerDto.getLastName());
+        lastNameField.setValue(trainer.getLastName());
         lastNameField.setWidth("400px");
         lastNameField.setMaxWidth("100%");
         lastNameField.setReadOnly(true);
@@ -138,7 +138,7 @@ public class TrainerAccountView extends VerticalLayout {
     private TextField getEmailField() {
         TextField emailField = new TextField();
         emailField.setLabel("Email");
-        emailField.setValue(sessionMemoryDto.getEmail());
+        emailField.setValue(sessionMemory.getEmail());
         emailField.setWidth("400px");
         emailField.setMaxWidth("100%");
         emailField.setReadOnly(true);
@@ -148,7 +148,7 @@ public class TrainerAccountView extends VerticalLayout {
     private TextField getFirstNameField() {
         TextField firstNameField = new TextField();
         firstNameField.setLabel("First Name");
-        firstNameField.setValue(trainerDto.getFirstName());
+        firstNameField.setValue(trainer.getFirstName());
         firstNameField.setWidth("400px");
         firstNameField.setMaxWidth("100%");
         firstNameField.setReadOnly(true);
@@ -159,7 +159,7 @@ public class TrainerAccountView extends VerticalLayout {
     private TextArea getEducationArea() {
         TextArea educationArea = new TextArea();
         educationArea.setLabel("Education");
-        educationArea.setValue(trainerDto.getEducation());
+        educationArea.setValue(trainer.getEducation());
         educationArea.setWidth("400px");
         educationArea.setMaxWidth("100%");
         educationArea.setReadOnly(true);
@@ -170,7 +170,7 @@ public class TrainerAccountView extends VerticalLayout {
     private TextArea getDescriptionArea() {
         TextArea descriptionArea = new TextArea();
         descriptionArea.setLabel("Description");
-        descriptionArea.setValue(trainerDto.getDescription());
+        descriptionArea.setValue(trainer.getDescription());
         descriptionArea.setWidth("400px");
         descriptionArea.setMaxWidth("100%");
         descriptionArea.setReadOnly(true);

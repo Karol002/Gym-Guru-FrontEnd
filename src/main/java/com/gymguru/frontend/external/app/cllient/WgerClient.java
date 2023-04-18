@@ -1,7 +1,7 @@
 package com.gymguru.frontend.external.app.cllient;
 
-import com.gymguru.frontend.domain.Category;
-import com.gymguru.frontend.domain.dto.ExerciseDto;
+import com.gymguru.frontend.domain.WgerCategory;
+import com.gymguru.frontend.domain.WgerExercise;
 import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -20,23 +20,23 @@ public class WgerClient {
     private final RestTemplate restTemplate;
     private final BackendClientConfiguration backendClientConfiguration;
 
-    public List<Category> getCategories() throws HttpClientErrorException {
+    public List<WgerCategory> getCategories() throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getWger() + "/categories")
                 .build()
                 .encode()
                 .toUri();
 
         return List.of(Objects.requireNonNull
-                (restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), Category[].class).getBody()));
+                (restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), WgerCategory[].class).getBody()));
     }
 
-    public List<ExerciseDto> getExercises(Long categoryId) throws HttpClientErrorException {
+    public List<WgerExercise> getExercises(Long categoryId) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getWger() + "/exercises/" + categoryId)
                 .build()
                 .encode()
                 .toUri();
 
         return List.of(Objects.requireNonNull(restTemplate.exchange
-                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), ExerciseDto[].class).getBody()));
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), WgerExercise[].class).getBody()));
     }
 }

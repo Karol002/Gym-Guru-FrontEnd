@@ -1,8 +1,8 @@
 package com.gymguru.frontend.view.trainer;
 
-import com.gymguru.frontend.domain.SubscriptionStatus;
-import com.gymguru.frontend.domain.dto.SessionMemoryDto;
-import com.gymguru.frontend.domain.dto.SubscriptionWithUserDto;
+import com.gymguru.frontend.domain.enums.SubscriptionStatus;
+import com.gymguru.frontend.domain.SessionMemory;
+import com.gymguru.frontend.domain.dto.SubscriptionWithUser;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -10,12 +10,12 @@ import com.vaadin.flow.component.select.Select;
 
 public class TrainerSubscriptionsView extends VerticalLayout {
     private final SubscriptionService subscriptionService;
-    private final SessionMemoryDto sessionMemoryDto;
-    private final Grid<SubscriptionWithUserDto> subscriptionDtoGrid;
+    private final SessionMemory sessionMemory;
+    private final Grid<SubscriptionWithUser> subscriptionDtoGrid;
 
-    public TrainerSubscriptionsView(SubscriptionService subscriptionService, SessionMemoryDto sessionMemoryDto) {
+    public TrainerSubscriptionsView(SubscriptionService subscriptionService, SessionMemory sessionMemory) {
         this.subscriptionService = subscriptionService;
-        this.sessionMemoryDto = sessionMemoryDto;
+        this.sessionMemory = sessionMemory;
         Select<SubscriptionStatus> subscriptionStatusSelect = getSpecializationSelect();
         subscriptionDtoGrid = getSubscriptionGrid();
 
@@ -23,7 +23,7 @@ public class TrainerSubscriptionsView extends VerticalLayout {
         add(container);
     }
 
-    private VerticalLayout getContainer(Grid<SubscriptionWithUserDto> subscriptionDtoGrid, Select<SubscriptionStatus> subscriptionStatusSelect) {
+    private VerticalLayout getContainer(Grid<SubscriptionWithUser> subscriptionDtoGrid, Select<SubscriptionStatus> subscriptionStatusSelect) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "83vh");
         container.getStyle().set("width", "100%");
@@ -38,19 +38,19 @@ public class TrainerSubscriptionsView extends VerticalLayout {
         specializationSelect.setLabel("Subscriptions");
         specializationSelect.addValueChangeListener(event -> {
             if (event.getValue() == null || event.getValue() == SubscriptionStatus.All) {
-                subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsByTrainerId(sessionMemoryDto.getId()));
+                subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsByTrainerId(sessionMemory.getId()));
             } else {
-                subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsWithOutPlanByTrainerId(sessionMemoryDto.getId()));
+                subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsWithOutPlanByTrainerId(sessionMemory.getId()));
             }
         });
         return specializationSelect;
     }
 
-    private Grid<SubscriptionWithUserDto> getSubscriptionGrid() {
-        Grid<SubscriptionWithUserDto> subscriptionDtoGrid = new Grid<>(SubscriptionWithUserDto.class);
+    private Grid<SubscriptionWithUser> getSubscriptionGrid() {
+        Grid<SubscriptionWithUser> subscriptionDtoGrid = new Grid<>(SubscriptionWithUser.class);
 
         subscriptionDtoGrid.setColumns("userFirstName", "userLastName", "startDate", "endDate", "price");
-        subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsByTrainerId(sessionMemoryDto.getId()));
+        subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsByTrainerId(sessionMemory.getId()));
         return subscriptionDtoGrid;
     }
 }

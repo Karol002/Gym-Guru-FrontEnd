@@ -1,7 +1,7 @@
 package com.gymguru.frontend.external.app.cllient;
 
-import com.gymguru.frontend.domain.dto.UserDto;
-import com.gymguru.frontend.domain.dto.UserToSaveDto;
+import com.gymguru.frontend.domain.User;
+import com.gymguru.frontend.domain.UserAccount;
 import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -19,7 +19,7 @@ public class UserClient {
     private final RestTemplate restTemplate;
     private final BackendClientConfiguration backendClientConfiguration;
 
-    public HttpStatus createUser(UserToSaveDto user) throws HttpClientErrorException {
+    public HttpStatus createUser(UserAccount user) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getUser())
                 .build()
                 .encode()
@@ -28,21 +28,21 @@ public class UserClient {
         return restTemplate.postForEntity(url, user, Void.class).getStatusCode();
     }
 
-    public UserDto getUser(Long id) throws HttpClientErrorException {
+    public User getUser(Long id) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getUser() +  "/id/"  + id)
                 .build()
                 .encode()
                 .toUri();
 
-        return restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), UserDto.class).getBody();
+        return restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), User.class).getBody();
     }
 
-    public HttpStatus updateUser(UserDto userDto) throws HttpClientErrorException {
+    public HttpStatus updateUser(User user) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getUser())
                 .build()
                 .encode()
                 .toUri();
 
-        return restTemplate.exchange(url, HttpMethod.PUT, backendClientConfiguration.getAuthorizationEntity(userDto), Void.class).getStatusCode();
+        return restTemplate.exchange(url, HttpMethod.PUT, backendClientConfiguration.getAuthorizationEntity(user), Void.class).getStatusCode();
     }
 }

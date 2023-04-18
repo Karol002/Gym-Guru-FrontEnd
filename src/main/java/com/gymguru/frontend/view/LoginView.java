@@ -1,7 +1,7 @@
 package com.gymguru.frontend.view;
 
-import com.gymguru.frontend.domain.Role;
-import com.gymguru.frontend.domain.dto.SessionMemoryDto;
+import com.gymguru.frontend.domain.enums.Role;
+import com.gymguru.frontend.domain.SessionMemory;
 import com.gymguru.frontend.service.AuthService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -83,9 +83,9 @@ public class LoginView extends VerticalLayout {
     }
 
     private String choseViewAfterLogin() {
-        SessionMemoryDto sessionMemoryDto = VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class);
-        if (sessionMemoryDto.getRole() == Role.ROLE_USER) return "gymguru/panel/user";
-        else if (sessionMemoryDto.getRole() == Role.ROLE_TRAINER) return "gymguru/panel/trainer";
+        SessionMemory sessionMemory = VaadinSession.getCurrent().getAttribute(SessionMemory.class);
+        if (sessionMemory.getRole() == Role.ROLE_USER) return "gymguru/panel/user";
+        else if (sessionMemory.getRole() == Role.ROLE_TRAINER) return "gymguru/panel/trainer";
         else return "gymguru";
     }
 

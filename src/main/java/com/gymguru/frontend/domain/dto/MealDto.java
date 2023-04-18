@@ -11,8 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MealDto {
-    @JsonProperty("label")
-    private String label;
-    @JsonProperty("ingredientLines")
-    private String ingredientLines;
+    @JsonProperty("id")
+    private Long id;
+    @JsonProperty("name")
+    private String name;
+    @JsonProperty("cookInstruction")
+    private String cookInstruction;
+    @JsonProperty("planId")
+    private Long planId;
 }

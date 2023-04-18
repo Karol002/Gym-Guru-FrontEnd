@@ -1,7 +1,7 @@
 package com.gymguru.frontend.service;
 
-import com.gymguru.frontend.domain.dto.UserDto;
-import com.gymguru.frontend.domain.dto.UserToSaveDto;
+import com.gymguru.frontend.domain.User;
+import com.gymguru.frontend.domain.UserAccount;
 import com.gymguru.frontend.external.app.cllient.UserClient;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -17,25 +17,25 @@ public class UserService {
 
     public boolean createUser(String email, String password, String firstName, String lastName) {
         try {
-            return userClient.createUser(new UserToSaveDto(email, password, firstName, lastName)).is2xxSuccessful();
+            return userClient.createUser(new UserAccount(email, password, firstName, lastName)).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return false;
         }
     }
 
-    public UserDto getUserById(Long id) {
+    public User getUserById(Long id) {
         try {
             return userClient.getUser(id);
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
-            return new UserDto();
+            return new User();
         }
     }
 
-    public boolean  updateUser(UserDto userDto) {
+    public boolean  updateUser(User user) {
         try {
-            return userClient.updateUser(userDto).is2xxSuccessful();
+            return userClient.updateUser(user).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return false;

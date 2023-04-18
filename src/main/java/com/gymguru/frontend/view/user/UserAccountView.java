@@ -1,9 +1,9 @@
 package com.gymguru.frontend.view.user;
 
 
-import com.gymguru.frontend.domain.SubscriptionDto;
-import com.gymguru.frontend.domain.dto.SessionMemoryDto;
-import com.gymguru.frontend.domain.dto.UserDto;
+import com.gymguru.frontend.domain.Subscription;
+import com.gymguru.frontend.domain.SessionMemory;
+import com.gymguru.frontend.domain.User;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.gymguru.frontend.service.UserService;
 import com.vaadin.flow.component.button.Button;
@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class UserAccountView extends VerticalLayout {
     private final UserService userService;
     private final SubscriptionService subscriptionService;
-    private final SessionMemoryDto sessionMemoryDto;
+    private final SessionMemory sessionMemory;
     private final Label accountLabel;
     private final Label subscriptionLabel;
     private final TextField emailField;
@@ -32,8 +32,8 @@ public class UserAccountView extends VerticalLayout {
     private TextField startSub;
     private TextField endSub;
     private TextField priceSub;
-    private UserDto userDto;
-    private SubscriptionDto subscriptionDto;
+    private User user;
+    private Subscription subscription;
 
 
     @Autowired
@@ -44,9 +44,9 @@ public class UserAccountView extends VerticalLayout {
         this.userService = userService;
         this.subscriptionService = subscriptionService;
 
-        sessionMemoryDto = VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class);
+        sessionMemory = VaadinSession.getCurrent().getAttribute(SessionMemory.class);
 
-        userDto = userService.getUserById(sessionMemoryDto.getId());
+        user = userService.getUserById(sessionMemory.getId());
         accountLabel = getAccountLabel();
         emailField = getEmailField();
         firstNameField = getFirstNameField();
@@ -54,8 +54,8 @@ public class UserAccountView extends VerticalLayout {
         editButton = getEditButton();
         saveButton = getSaveButton();
 
-        if (subscriptionService.checkStatus(userDto.getId())) {
-            subscriptionDto = subscriptionService.getSubscription(userDto.getId());
+        if (subscriptionService.checkStatus(user.getId())) {
+            subscription = subscriptionService.getSubscription(user.getId());
             subscriptionLabel = getActiveSubscriptionLabel();
             priceSub = getPriceSub();
             startSub = getStartSub();
@@ -79,7 +79,7 @@ public class UserAccountView extends VerticalLayout {
         extendButton.setHeight("60px");
 
         extendButton.addClickListener(event -> {
-            long maxExtend = subscriptionService.getMaxExtendSubscription(subscriptionDto);
+            long maxExtend = subscriptionService.getMaxExtendSubscription(subscription);
             if (maxExtend > 0) getSubLengthLayout(maxExtend);
             else getMaxSubLengthLayout();
         });
@@ -104,7 +104,7 @@ public class UserAccountView extends VerticalLayout {
 
         Button confirmButton = new Button("Confirm", event1 -> {
             if (subscriptionExtendSelect.getValue() != null) {
-                subscriptionService.extendSubscription(sessionMemoryDto.getId(), subscriptionExtendSelect.getValue());
+                subscriptionService.extendSubscription(sessionMemory.getId(), subscriptionExtendSelect.getValue());
                 Notification.show("Successfully extend subscription!");
                 refresh();
                 dialog.close();
@@ -179,7 +179,7 @@ public class UserAccountView extends VerticalLayout {
             if (prepareEditData()) {
                 editButton.setVisible(true); saveButton.setVisible(false);
                 firstNameField.setReadOnly(true); lastNameField.setReadOnly(true);
-                userDto = userService.getUserById(sessionMemoryDto.getId());
+                user = userService.getUserById(sessionMemory.getId());
                 Notification.show("Successfully change data!");
             }
         });
@@ -187,15 +187,15 @@ public class UserAccountView extends VerticalLayout {
     }
 
     private boolean prepareEditData() {
-        userDto.setFirstName(firstNameField.getValue());
-        userDto.setLastName(lastNameField.getValue());
-        return userService.updateUser(userDto);
+        user.setFirstName(firstNameField.getValue());
+        user.setLastName(lastNameField.getValue());
+        return userService.updateUser(user);
     }
 
     private TextField getEndSub() {
         TextField endSub = new TextField();
         endSub.setLabel("Subscription end date");
-        endSub.setValue(subscriptionDto.getEndDate().toString());
+        endSub.setValue(subscription.getEndDate().toString());
         endSub.setWidth("400px");
         endSub.setMaxWidth("100%");
         endSub.setReadOnly(true);
@@ -206,7 +206,7 @@ public class UserAccountView extends VerticalLayout {
     private TextField getStartSub() {
         TextField startSub = new TextField();
         startSub.setLabel("Subscription start date");
-        startSub.setValue(subscriptionDto.getStartDate().toString());
+        startSub.setValue(subscription.getStartDate().toString());
         startSub.setWidth("400px");
         startSub.setMaxWidth("100%");
         startSub.setReadOnly(true);
@@ -217,7 +217,7 @@ public class UserAccountView extends VerticalLayout {
     private TextField getPriceSub() {
         TextField priceSub = new TextField();
         priceSub.setLabel("Subscription price");
-        priceSub.setValue(subscriptionDto.getPrice().toString() + "$");
+        priceSub.setValue(subscription.getPrice().toString() + "$");
         priceSub.setWidth("400px");
         priceSub.setMaxWidth("100%");
         priceSub.setReadOnly(true);
@@ -228,7 +228,7 @@ public class UserAccountView extends VerticalLayout {
     private TextField getLastNameField() {
         TextField lastNameField = new TextField();
         lastNameField.setLabel("Last Name");
-        lastNameField.setValue(userDto.getLastName());
+        lastNameField.setValue(user.getLastName());
         lastNameField.setWidth("400px");
         lastNameField.setMaxWidth("100%");
         lastNameField.setReadOnly(true);
@@ -239,7 +239,7 @@ public class UserAccountView extends VerticalLayout {
     private TextField getEmailField() {
         TextField emailField = new TextField();
         emailField.setLabel("Email");
-        emailField.setValue(sessionMemoryDto.getEmail());
+        emailField.setValue(sessionMemory.getEmail());
         emailField.setWidth("400px");
         emailField.setMaxWidth("100%");
         emailField.setReadOnly(true);
@@ -249,7 +249,7 @@ public class UserAccountView extends VerticalLayout {
     private TextField getFirstNameField() {
         TextField firstNameField = new TextField();
         firstNameField.setLabel("First Name");
-        firstNameField.setValue(userDto.getFirstName());
+        firstNameField.setValue(user.getFirstName());
         firstNameField.setWidth("400px");
         firstNameField.setMaxWidth("100%");
         firstNameField.setReadOnly(true);
@@ -270,7 +270,7 @@ public class UserAccountView extends VerticalLayout {
     }
 
     private void refresh() {
-        subscriptionDto = subscriptionService.getSubscription(userDto.getId());
+        subscription = subscriptionService.getSubscription(user.getId());
         priceSub = getPriceSub();
         startSub = getStartSub();
         endSub = getEndSub();

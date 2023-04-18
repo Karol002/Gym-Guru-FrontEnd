@@ -1,6 +1,6 @@
 package com.gymguru.frontend.external.app.cllient;
 
-import com.gymguru.frontend.domain.SubscriptionDto;
+import com.gymguru.frontend.domain.Subscription;
 import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -20,13 +20,13 @@ public class SubscriptionClient {
     private final RestTemplate restTemplate;
     private final BackendClientConfiguration backendClientConfiguration;
 
-    public HttpStatus subscribe(SubscriptionDto subscriptionDto) throws HttpClientErrorException {
+    public HttpStatus subscribe(Subscription subscription) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription())
                 .build()
                 .encode()
                 .toUri();
 
-        return restTemplate.postForEntity(url, backendClientConfiguration.getAuthorizationEntity(subscriptionDto), Void.class).getStatusCode();
+        return restTemplate.postForEntity(url, backendClientConfiguration.getAuthorizationEntity(subscription), Void.class).getStatusCode();
     }
 
     public void extendSubscription(Long userId, Long monthQuantity) throws HttpClientErrorException  {
@@ -48,42 +48,42 @@ public class SubscriptionClient {
         return restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), Boolean.class).getBody();
     }
 
-    public SubscriptionDto getSubscriptionByUserId(Long userId) throws HttpClientErrorException  {
+    public Subscription getSubscriptionByUserId(Long userId) throws HttpClientErrorException  {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription() + "/user/" + userId)
                 .build()
                 .encode()
                 .toUri();
 
-        return restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), SubscriptionDto.class).getBody();
+        return restTemplate.exchange(url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), Subscription.class).getBody();
     }
 
-    public List<SubscriptionDto> getSubscriptionsWithoutPlanByTrainerId(Long trainerId) throws HttpClientErrorException  {
+    public List<Subscription> getSubscriptionsWithoutPlanByTrainerId(Long trainerId) throws HttpClientErrorException  {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription() + "/without/plan/" + trainerId)
                 .build()
                 .encode()
                 .toUri();
 
         return List.of(Objects.requireNonNull(restTemplate.exchange
-                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), SubscriptionDto[].class).getBody()));
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), Subscription[].class).getBody()));
     }
 
-    public List<SubscriptionDto> getSubscriptionsWithPlanByTrainerId(Long trainerId) throws HttpClientErrorException  {
+    public List<Subscription> getSubscriptionsWithPlanByTrainerId(Long trainerId) throws HttpClientErrorException  {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription() + "/with/plan/" + trainerId)
                 .build()
                 .encode()
                 .toUri();
 
         return List.of(Objects.requireNonNull(restTemplate.exchange
-                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), SubscriptionDto[].class).getBody()));
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), Subscription[].class).getBody()));
     }
 
-    public List<SubscriptionDto> getAllSubscriptionsByTrainerId(Long trainerId) throws HttpClientErrorException {
+    public List<Subscription> getAllSubscriptionsByTrainerId(Long trainerId) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getSubscription() + "/trainer/" + trainerId)
                 .build()
                 .encode()
                 .toUri();
 
         return List.of(Objects.requireNonNull(restTemplate.exchange
-                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), SubscriptionDto[].class).getBody()));
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), Subscription[].class).getBody()));
     }
 }

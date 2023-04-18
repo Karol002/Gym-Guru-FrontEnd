@@ -1,8 +1,8 @@
 package com.gymguru.frontend.service;
 
-import com.gymguru.frontend.domain.Specialization;
+import com.gymguru.frontend.domain.enums.Specialization;
 import com.gymguru.frontend.domain.dto.TrainerAccount;
-import com.gymguru.frontend.domain.dto.TrainerDto;
+import com.gymguru.frontend.domain.Trainer;
 import com.gymguru.frontend.external.app.cllient.TrainerClient;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public class TrainerService {
         }
     }
 
-    public Set<TrainerDto> getAllBySpecialization(Specialization specialization) {
+    public Set<Trainer> getAllBySpecialization(Specialization specialization) {
         try {
             return new HashSet<>(trainerClient.getAllTrainersBySpecialization(specialization));
         } catch (HttpClientErrorException exception) {
@@ -42,7 +42,7 @@ public class TrainerService {
         }
     }
 
-    public Set<TrainerDto> getTrainers() {
+    public Set<Trainer> getTrainers() {
         try {
             return new HashSet<>(trainerClient.getAllTrainers());
         } catch (HttpClientErrorException exception) {
@@ -51,18 +51,18 @@ public class TrainerService {
         }
     }
 
-    public TrainerDto getTrainer(Long id) {
+    public Trainer getTrainer(Long id) {
         try {
             return trainerClient.getTrainerById(id);
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
-            return new TrainerDto();
+            return new Trainer();
         }
     }
 
-    public Boolean updateTrainer(TrainerDto trainerDto) {
+    public Boolean updateTrainer(Trainer trainer) {
         try {
-            return trainerClient.updateTrainer(trainerDto).is2xxSuccessful();
+            return trainerClient.updateTrainer(trainer).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return false;

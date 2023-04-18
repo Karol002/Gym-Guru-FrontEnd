@@ -1,6 +1,6 @@
 package com.gymguru.frontend.external.app.config;
 
-import com.gymguru.frontend.domain.dto.SessionMemoryDto;
+import com.gymguru.frontend.domain.SessionMemory;
 import com.vaadin.flow.server.VaadinSession;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,14 +46,14 @@ public class BackendClientConfiguration {
 
     public HttpEntity<?> getAuthorizationEntity() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class).getToken());
+        headers.set("Authorization", "Bearer " + VaadinSession.getCurrent().getAttribute(SessionMemory.class).getToken());
 
         return new HttpEntity<>(headers);
     }
 
     public HttpEntity<?> getAuthorizationEntity(Object entityObject) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class).getToken());
+        headers.set("Authorization", "Bearer " + VaadinSession.getCurrent().getAttribute(SessionMemory.class).getToken());
 
         return new HttpEntity<>(entityObject, headers);
     }

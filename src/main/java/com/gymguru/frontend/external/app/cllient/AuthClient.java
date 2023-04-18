@@ -1,7 +1,7 @@
 package com.gymguru.frontend.external.app.cllient;
 
 import com.gymguru.frontend.domain.AuthToken;
-import com.gymguru.frontend.domain.dto.CredentialDto;
+import com.gymguru.frontend.domain.dto.Credential;
 import com.gymguru.frontend.domain.dto.PasswordChanger;
 import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import java.net.URI;
 public class AuthClient {
     private final RestTemplate restTemplate;
     private final BackendClientConfiguration backendClientConfiguration;
-    public AuthToken getAuthToken(CredentialDto credentials ) throws HttpClientErrorException {
+    public AuthToken getAuthToken(Credential credentials ) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getLogin())
                 .build()
                 .encode()

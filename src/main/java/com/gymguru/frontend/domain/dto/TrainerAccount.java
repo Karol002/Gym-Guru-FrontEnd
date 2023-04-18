@@ -1,6 +1,6 @@
 package com.gymguru.frontend.domain.dto;
 
-import com.gymguru.frontend.domain.Specialization;
+import com.gymguru.frontend.domain.enums.Specialization;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

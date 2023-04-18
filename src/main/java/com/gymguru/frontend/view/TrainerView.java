@@ -1,6 +1,6 @@
 package com.gymguru.frontend.view;
 
-import com.gymguru.frontend.domain.dto.SessionMemoryDto;
+import com.gymguru.frontend.domain.SessionMemory;
 import com.gymguru.frontend.service.*;
 import com.gymguru.frontend.view.trainer.TrainerAccountView;
 import com.gymguru.frontend.view.trainer.TrainerExtendPlanView;
@@ -88,28 +88,28 @@ public class TrainerView extends AppLayout {
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("Create a plan")) {
-                setContent(new TrainerPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class), wgerService, userService, edamamService, planService));
+                setContent(new TrainerPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemory.class), wgerService, userService, edamamService, planService));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("My plans")) {
-                setContent(new TrainerExtendPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class), planService));
+                setContent(new TrainerExtendPlanView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemory.class), planService));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("My Subscribers")) {
-                setContent(new TrainerSubscriptionsView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class)));
+                setContent(new TrainerSubscriptionsView(subscriptionService, VaadinSession.getCurrent().getAttribute(SessionMemory.class)));
             }
         });
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("My Data")) {
-                setContent(new TrainerAccountView(trainerService, VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class)));
+                setContent(new TrainerAccountView(trainerService, VaadinSession.getCurrent().getAttribute(SessionMemory.class)));
             }
         });
 

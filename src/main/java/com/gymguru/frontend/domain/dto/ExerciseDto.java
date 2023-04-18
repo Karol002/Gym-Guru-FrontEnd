@@ -11,8 +11,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ExerciseDto {
+    @JsonProperty("id")
+    private Long id;
     @JsonProperty("name")
     private String name;
     @JsonProperty("description")
     private String description;
+    @JsonProperty("seriesQuantity")
+    private int seriesQuantity;
+    @JsonProperty("repetitionsQuantity")
+    private int repetitionsQuantity;
+    @JsonProperty("planId")
+    private Long planId;
+
 }

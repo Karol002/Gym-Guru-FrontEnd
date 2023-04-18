@@ -1,6 +1,6 @@
 package com.gymguru.frontend.external.app.cllient;
 
-import com.gymguru.frontend.domain.dto.MealDto;
+import com.gymguru.frontend.domain.dto.EdamamMeal;
 import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -18,7 +18,7 @@ public class EdamamClient {
     private final BackendClientConfiguration backendClientConfiguration;
     private final RestTemplate restTemplate;
 
-    public List<MealDto> getMeals(String mealName) {
+    public List<EdamamMeal> getMeals(String mealName) {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint()
                         + backendClientConfiguration.getEdamam() + "/meals/" + mealName)
                 .build()
@@ -26,6 +26,6 @@ public class EdamamClient {
                 .toUri();
 
         return List.of(Objects.requireNonNull(restTemplate.exchange
-                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), MealDto[].class).getBody()));
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), EdamamMeal[].class).getBody()));
     }
 }

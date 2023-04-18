@@ -1,8 +1,6 @@
 package com.gymguru.frontend.view.trainer;
 
-import com.gymguru.frontend.domain.Category;
-import com.gymguru.frontend.domain.Exercise;
-import com.gymguru.frontend.domain.Meal;
+import com.gymguru.frontend.domain.*;
 import com.gymguru.frontend.domain.dto.*;
 import com.gymguru.frontend.service.*;
 import com.vaadin.flow.component.button.Button;
@@ -24,13 +22,13 @@ import java.util.stream.Collectors;
 public class TrainerPlanView extends VerticalLayout {
     private final static Long EXAMPLE_CATEGORY = 11L;
     private final SubscriptionService subscriptionService;
-    private final SessionMemoryDto sessionMemoryDto;
+    private final SessionMemory sessionMemory;
     private final WgerService wgerService;
     private final UserService userService;
     private final EdamamService edmamService;
     private final PlanService planService;
     private final TrainerDialogCreator trainerDialogCreator;
-    private final List<Category> categories;
+    private final List<WgerCategory> categories;
     private final Select<String> exerciseCategory;
     private final Button finishButton;
     private final Button exerciseButton;
@@ -39,20 +37,20 @@ public class TrainerPlanView extends VerticalLayout {
     private final TextField mealNameField;
     private final Button findMealButton;
     private final HorizontalLayout findMealLayout;
-    private final Grid<ExerciseDto> exerciseDtoGrid;
-    private final Grid<MealDto> mealDtoGrid;
+    private final Grid<WgerExercise> exerciseDtoGrid;
+    private final Grid<EdamamMeal> mealDtoGrid;
     private final VerticalLayout mainContainer;
-    private Grid<SubscriptionWithUserDto> subscriptionDtoGrid;
-    private UserDto userDto;
+    private Grid<SubscriptionWithUser> subscriptionDtoGrid;
+    private User user;
     private String dietDescription;
     private String trainingDescription;
 
-    public TrainerPlanView(SubscriptionService subscriptionService, SessionMemoryDto sessionMemoryDto, WgerService wgerService,
+    public TrainerPlanView(SubscriptionService subscriptionService, SessionMemory sessionMemory, WgerService wgerService,
                            UserService userService, EdamamService edmamService, PlanService planService) {
 
         this.planService = planService;
         this.subscriptionService = subscriptionService;
-        this.sessionMemoryDto = sessionMemoryDto;
+        this.sessionMemory = sessionMemory;
         this.wgerService = wgerService;
         this.userService = userService;
         this.edmamService = edmamService;
@@ -76,7 +74,7 @@ public class TrainerPlanView extends VerticalLayout {
         add(mainContainer);
     }
 
-    private VerticalLayout getUsersContainer(Grid<SubscriptionWithUserDto> subscriptionDtoGrid) {
+    private VerticalLayout getUsersContainer(Grid<SubscriptionWithUser> subscriptionDtoGrid) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "83vh");
         container.getStyle().set("width", "100%");
@@ -87,27 +85,27 @@ public class TrainerPlanView extends VerticalLayout {
         return container;
     }
 
-    private Grid<SubscriptionWithUserDto> getSubscriptionGrid() {
-        Grid<SubscriptionWithUserDto> subscriptionDtoGrid = new Grid<>(SubscriptionWithUserDto.class);
+    private Grid<SubscriptionWithUser> getSubscriptionGrid() {
+        Grid<SubscriptionWithUser> subscriptionDtoGrid = new Grid<>(SubscriptionWithUser.class);
 
         subscriptionDtoGrid.setColumns("userFirstName", "startDate", "endDate", "price");
         subscriptionDtoGrid.getColumnByKey("userFirstName").setWidth("20%");
         subscriptionDtoGrid.getColumnByKey("startDate").setWidth("20%");
         subscriptionDtoGrid.getColumnByKey("endDate").setWidth("20%");
         subscriptionDtoGrid.getColumnByKey("price").setWidth("20%");
-        subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsWithOutPlanByTrainerId(sessionMemoryDto.getId()));
+        subscriptionDtoGrid.setItems(subscriptionService.getSubscriptionsWithOutPlanByTrainerId(sessionMemory.getId()));
         subscriptionDtoGrid.asSingleSelect().addValueChangeListener(event -> selectUser(subscriptionDtoGrid.asSingleSelect().getValue()));
         return subscriptionDtoGrid;
 
     }
 
-    private void selectUser(SubscriptionWithUserDto subscriptionWithUserDto) {
-        userDto = userService.getUserById(subscriptionWithUserDto.getUserId());
+    private void selectUser(SubscriptionWithUser subscriptionWithUserDto) {
+        user = userService.getUserById(subscriptionWithUserDto.getUserId());
         mainContainer.removeAll();
         mainContainer.add(getMealContainer(mealDtoGrid, exerciseButton, findMealLayout));
     }
 
-    private VerticalLayout getExerciseContainer(Grid<ExerciseDto> exercisesDtoGrid, Select<String> specializationSelect, Button finishButton) {
+    private VerticalLayout getExerciseContainer(Grid<WgerExercise> exercisesDtoGrid, Select<String> specializationSelect, Button finishButton) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "83vh");
         container.getStyle().set("width", "100%");
@@ -133,7 +131,7 @@ public class TrainerPlanView extends VerticalLayout {
                 if(!descriptionArea.isEmpty()) {
                     dialog.close();
                     trainingDescription = descriptionArea.getValue();
-                    if (planService.createPlan(dietDescription, trainingDescription, userDto.getId(), sessionMemoryDto.getId(), exercises, meals)) {
+                    if (planService.createPlan(dietDescription, trainingDescription, user.getId(), sessionMemory.getId(), exercises, meals)) {
                         Notification.show("Successful create plan");
                     } else Notification.show("Plan create error");
                     refresh();
@@ -168,11 +166,11 @@ public class TrainerPlanView extends VerticalLayout {
         Select<String> categorySelect = new Select<>();
         categorySelect.setLabel("Exercise categories");
 
-                categorySelect.setItems(categories.stream().map(Category::getName).collect(Collectors.toList()));
+                categorySelect.setItems(categories.stream().map(WgerCategory::getName).collect(Collectors.toList()));
         categorySelect.addValueChangeListener(event -> {
             String selectedCategoryName = event.getValue();
             Long selectedCategoryId = categories.stream()
-                    .filter(category -> category.getName().equals(selectedCategoryName))
+                    .filter(wgerCategory -> wgerCategory.getName().equals(selectedCategoryName))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Not found category:" + selectedCategoryName))
                     .getId();
@@ -182,13 +180,13 @@ public class TrainerPlanView extends VerticalLayout {
         return categorySelect;
     }
 
-    private Grid<ExerciseDto> getExerciseGrid() {
-        Grid<ExerciseDto> exerciseDtoGrid = new Grid<>(ExerciseDto.class);
+    private Grid<WgerExercise> getExerciseGrid() {
+        Grid<WgerExercise> exerciseDtoGrid = new Grid<>(WgerExercise.class);
 
         exerciseDtoGrid.setColumns("name");
         exerciseDtoGrid.getColumnByKey("name").setWidth("20%");
-        exerciseDtoGrid.addColumn(TemplateRenderer.<ExerciseDto>of("<div style='white-space: normal'>[[item.description]]</div>")
-                        .withProperty("description", ExerciseDto::getDescription))
+        exerciseDtoGrid.addColumn(TemplateRenderer.<WgerExercise>of("<div style='white-space: normal'>[[item.description]]</div>")
+                        .withProperty("description", WgerExercise::getDescription))
                 .setHeader("Description")
                 .setFlexGrow(60);
         exerciseDtoGrid.asSingleSelect().addValueChangeListener(event -> selectExercise(exerciseDtoGrid.asSingleSelect().getValue()));
@@ -198,12 +196,12 @@ public class TrainerPlanView extends VerticalLayout {
         return exerciseDtoGrid;
     }
 
-    private void selectExercise(ExerciseDto exerciseDto) {
-        Dialog dialog = trainerDialogCreator.getExerciseDialog(exercises, exerciseDto, finishButton);
+    private void selectExercise(WgerExercise wgerExercise) {
+        Dialog dialog = trainerDialogCreator.getExerciseDialog(exercises, wgerExercise, finishButton);
         dialog.open();
     }
 
-    private VerticalLayout getMealContainer(Grid<MealDto> mealDtoGrid, Button exerciseButton, HorizontalLayout horizontalLayout) {
+    private VerticalLayout getMealContainer(Grid<EdamamMeal> mealDtoGrid, Button exerciseButton, HorizontalLayout horizontalLayout) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "83vh");
         container.getStyle().set("width", "100%");
@@ -212,13 +210,13 @@ public class TrainerPlanView extends VerticalLayout {
         return container;
     }
 
-    private Grid<MealDto> getMealDtoGrid() {
-        Grid<MealDto> mealDtoGrid = new Grid<>(MealDto.class);
+    private Grid<EdamamMeal> getMealDtoGrid() {
+        Grid<EdamamMeal> mealDtoGrid = new Grid<>(EdamamMeal.class);
 
         mealDtoGrid.setColumns("label");
         mealDtoGrid.getColumnByKey("label").setWidth("20%");
-        mealDtoGrid.addColumn(TemplateRenderer.<MealDto>of("<div style='white-space: normal'>[[item.ingredientLines]]</div>")
-                        .withProperty("ingredientLines", MealDto::getIngredientLines))
+        mealDtoGrid.addColumn(TemplateRenderer.<EdamamMeal>of("<div style='white-space: normal'>[[item.ingredientLines]]</div>")
+                        .withProperty("ingredientLines", EdamamMeal::getIngredientLines))
                 .setHeader("Ingredient Lines")
                 .setFlexGrow(60);
 
@@ -227,8 +225,8 @@ public class TrainerPlanView extends VerticalLayout {
         return mealDtoGrid;
     }
 
-    private void selectMeal(MealDto mealDto) {
-        Dialog dialog = trainerDialogCreator.getMealDialog(meals, mealDto, exerciseButton);
+    private void selectMeal(EdamamMeal edamamMeal) {
+        Dialog dialog = trainerDialogCreator.getMealDialog(meals, edamamMeal, exerciseButton);
         dialog.open();
     }
 

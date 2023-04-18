@@ -1,8 +1,8 @@
 package com.gymguru.frontend.view.user;
 
-import com.gymguru.frontend.domain.Specialization;
-import com.gymguru.frontend.domain.dto.SessionMemoryDto;
-import com.gymguru.frontend.domain.dto.TrainerDto;
+import com.gymguru.frontend.domain.enums.Specialization;
+import com.gymguru.frontend.domain.SessionMemory;
+import com.gymguru.frontend.domain.Trainer;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.gymguru.frontend.service.TrainerService;
 import com.vaadin.flow.component.button.Button;
@@ -21,15 +21,15 @@ import java.time.LocalDate;
 public class UserBuyView extends VerticalLayout {
     private final TrainerService trainerService;
     private final SubscriptionService subscriptionService;
-    private final SessionMemoryDto sessionMemoryDto;
+    private final SessionMemory sessionMemory;
     private final VerticalLayout container;
     private final Select<Specialization> specializationSelect;
-    private Grid<TrainerDto> trainerGrid;
+    private Grid<Trainer> trainerGrid;
 
-    public UserBuyView(TrainerService trainerService, SubscriptionService subscriptionService, SessionMemoryDto sessionMemoryDto) {
+    public UserBuyView(TrainerService trainerService, SubscriptionService subscriptionService, SessionMemory sessionMemory) {
         this.trainerService = trainerService;
         this.subscriptionService = subscriptionService;
-        this.sessionMemoryDto = sessionMemoryDto;
+        this.sessionMemory = sessionMemory;
 
         trainerGrid = selectGrid();
         specializationSelect = getSpecializationSelect();
@@ -37,7 +37,7 @@ public class UserBuyView extends VerticalLayout {
         add(container);
     }
 
-    private VerticalLayout getContainer(Grid<TrainerDto> trainerGrid, Select<Specialization> specializationSelect) {
+    private VerticalLayout getContainer(Grid<Trainer> trainerGrid, Select<Specialization> specializationSelect) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "83vh");
         container.getStyle().set("width", "100%");
@@ -46,8 +46,8 @@ public class UserBuyView extends VerticalLayout {
         return container;
     }
 
-    private Grid<TrainerDto> selectGrid() {
-        if (subscriptionService.checkStatus(sessionMemoryDto.getId())) {
+    private Grid<Trainer> selectGrid() {
+        if (subscriptionService.checkStatus(sessionMemory.getId())) {
             return  getTrainersGridWithActiveSubscribe();
         } else  return getTrainersGridWithInactiveSubscription();
     }
@@ -66,21 +66,21 @@ public class UserBuyView extends VerticalLayout {
         return specializationSelect;
     }
 
-    private Grid<TrainerDto> getTrainersGridWithInactiveSubscription() {
-        Grid<TrainerDto> trainerGrid = new Grid<>(TrainerDto.class);
+    private Grid<Trainer> getTrainersGridWithInactiveSubscription() {
+        Grid<Trainer> trainerGrid = new Grid<>(Trainer.class);
         trainerGrid.setColumns("firstName", "specialization");
         trainerGrid.setItems(trainerService.getTrainers());
         trainerGrid.getColumnByKey("firstName").setWidth("5%");
         trainerGrid.getColumnByKey("specialization").setWidth("10%");
 
-        trainerGrid.addColumn(TemplateRenderer.<TrainerDto>of("<div style='white-space: normal'>[[item.education]]</div>")
-                        .withProperty("education", TrainerDto::getEducation))
+        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.education]]</div>")
+                        .withProperty("education", Trainer::getEducation))
                 .setHeader("Education")
                 .setWidth("25%")
                 .setFlexGrow(0);
 
-        trainerGrid.addColumn(TemplateRenderer.<TrainerDto>of("<div style='white-space: normal'>[[item.description]]</div>")
-                        .withProperty("description", TrainerDto::getDescription))
+        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.description]]</div>")
+                        .withProperty("description", Trainer::getDescription))
                 .setHeader("Description")
                 .setWidth("40%")
                 .setFlexGrow(0);
@@ -91,7 +91,7 @@ public class UserBuyView extends VerticalLayout {
     }
 
 
-    private Button createBuyButton(TrainerDto trainerDto) {
+    private Button createBuyButton(Trainer trainer) {
         Button buyButton = new Button("Subscribe", event -> {
             Dialog dialog = new Dialog();
             VerticalLayout dialogLayout = new VerticalLayout();
@@ -100,7 +100,7 @@ public class UserBuyView extends VerticalLayout {
 
             Label infoLabel = new Label("Subscription costs for chosen trainer");
             infoLabel.setWidthFull();
-            Label costLabel = new Label("For month: " + trainerDto.getMonthPrice().toString() + "$");
+            Label costLabel = new Label("For month: " + trainer.getMonthPrice().toString() + "$");
             costLabel.setWidthFull();
 
             Select<Integer> subscriptionLengthSelect = new Select<>();
@@ -113,9 +113,9 @@ public class UserBuyView extends VerticalLayout {
 
             Button confirmButton = new Button("Confirm", event1 -> {
                 if (!subscriptionLengthSelect.isEmpty()) {
-                    if (subscriptionService.subscribe(subscriptionLengthSelect.getValue() ,trainerDto.getMonthPrice(),
+                    if (subscriptionService.subscribe(subscriptionLengthSelect.getValue() , trainer.getMonthPrice(),
                             LocalDate.now(), LocalDate.now().plusMonths(subscriptionLengthSelect.getValue()),
-                            sessionMemoryDto.getId(), trainerDto.getId())) {
+                            sessionMemory.getId(), trainer.getId())) {
                         Notification.show("Successfully bought");
                         changeGridAfterBuy();
                     }
@@ -135,7 +135,7 @@ public class UserBuyView extends VerticalLayout {
 
             subscriptionLengthSelect.addValueChangeListener(event2 -> {
                 int subscriptionLength = event2.getValue();
-                BigDecimal price = trainerDto.getMonthPrice().multiply(BigDecimal.valueOf(subscriptionLength));
+                BigDecimal price = trainer.getMonthPrice().multiply(BigDecimal.valueOf(subscriptionLength));
                 priceLabel.setText("Full price: " + price.toPlainString() + "$");
             });
 
@@ -158,21 +158,21 @@ public class UserBuyView extends VerticalLayout {
         return buyButton;
     }
 
-    private Grid<TrainerDto> getTrainersGridWithActiveSubscribe() {
-        Grid<TrainerDto> trainerGrid = new Grid<>(TrainerDto.class);
+    private Grid<Trainer> getTrainersGridWithActiveSubscribe() {
+        Grid<Trainer> trainerGrid = new Grid<>(Trainer.class);
 
         trainerGrid.setColumns("firstName", "specialization");
         trainerGrid.setItems(trainerService.getTrainers());
         trainerGrid.getColumnByKey("firstName").setWidth("5%");
         trainerGrid.getColumnByKey("specialization").setWidth("10%");
 
-        trainerGrid.addColumn(TemplateRenderer.<TrainerDto>of("<div style='white-space: normal'>[[item.education]]</div>")
-                        .withProperty("education", TrainerDto::getEducation))
+        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.education]]</div>")
+                        .withProperty("education", Trainer::getEducation))
                 .setHeader("Education")
                 .setWidth("25%")
                 .setFlexGrow(0);
-        trainerGrid.addColumn(TemplateRenderer.<TrainerDto>of("<div style='white-space: normal'>[[item.description]]</div>")
-                        .withProperty("description", TrainerDto::getDescription))
+        trainerGrid.addColumn(TemplateRenderer.<Trainer>of("<div style='white-space: normal'>[[item.description]]</div>")
+                        .withProperty("description", Trainer::getDescription))
                 .setHeader("Description")
                 .setWidth("40%")
                 .setFlexGrow(0);

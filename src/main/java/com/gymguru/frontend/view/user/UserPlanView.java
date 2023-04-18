@@ -1,9 +1,10 @@
 package com.gymguru.frontend.view.user;
 
 import com.gymguru.frontend.domain.Plan;
-import com.gymguru.frontend.domain.dto.ExerciseWithId;
-import com.gymguru.frontend.domain.dto.MealWithId;
-import com.gymguru.frontend.domain.dto.SessionMemoryDto;
+import com.gymguru.frontend.domain.dto.ExerciseDto;
+import com.gymguru.frontend.domain.dto.MealDto;
+import com.gymguru.frontend.domain.SessionMemory;
+import com.gymguru.frontend.domain.dto.PlanDto;
 import com.gymguru.frontend.service.PlanService;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.vaadin.flow.component.grid.Grid;
@@ -16,19 +17,19 @@ import com.vaadin.flow.data.renderer.TemplateRenderer;
 public class UserPlanView extends VerticalLayout {
     private final SubscriptionService subscriptionService;
     private final PlanService planService;
-    private final SessionMemoryDto sessionMemoryDto;
-    private final Plan plan;
+    private final SessionMemory sessionMemory;
+    private final PlanDto plan;
 
-    public UserPlanView(SubscriptionService subscriptionService, PlanService planService, SessionMemoryDto sessionMemoryDto) {
+    public UserPlanView(SubscriptionService subscriptionService, PlanService planService, SessionMemory sessionMemory) {
         this.subscriptionService = subscriptionService;
         this.planService = planService;
-        this.sessionMemoryDto = sessionMemoryDto;
+        this.sessionMemory = sessionMemory;
 
-        plan = planService.getPlan(sessionMemoryDto.getId());
+        plan = planService.getPlan(sessionMemory.getId());
 
         if (plan != null) {
-            Grid<ExerciseWithId> exerciseGrid = getExerciseGird();
-            Grid<MealWithId> mealGrid = getMealGrid();
+            Grid<ExerciseDto> exerciseGrid = getExerciseGird();
+            Grid<MealDto> mealGrid = getMealGrid();
             TextArea trainingDescriptionArea = getTrainingDescriptionArea();
             TextArea mealDescriptionArea = getMealDescriptionArea();
 
@@ -68,13 +69,13 @@ public class UserPlanView extends VerticalLayout {
     }
 
     private String getTitleContent() {
-        if (subscriptionService.checkStatus(sessionMemoryDto.getId())) {
+        if (subscriptionService.checkStatus(sessionMemory.getId())) {
             if (plan != null) return "Your plan";
             else return "Wait for plan";
         } else return "You dont have available subscription";
     }
 
-    private VerticalLayout getContainer(Grid<MealWithId> mealGrid, TextArea mealDescription, Grid<ExerciseWithId> exerciseGrid, TextArea exerciseDescription) {
+    private VerticalLayout getContainer(Grid<MealDto> mealGrid, TextArea mealDescription, Grid<ExerciseDto> exerciseGrid, TextArea exerciseDescription) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle().set("height", "80vh");
         container.getStyle().set("width", "100%");
@@ -83,28 +84,28 @@ public class UserPlanView extends VerticalLayout {
         return container;
     }
 
-    private Grid<ExerciseWithId> getExerciseGird() {
-        Grid<ExerciseWithId> exerciseGrid = new Grid<>(ExerciseWithId.class);
+    private Grid<ExerciseDto> getExerciseGird() {
+        Grid<ExerciseDto> exerciseGrid = new Grid<>(ExerciseDto.class);
 
         exerciseGrid.setColumns("name", "seriesQuantity", "repetitionsQuantity");
         exerciseGrid.getColumnByKey("name").setWidth("20%");
         exerciseGrid.getColumnByKey("seriesQuantity").setWidth("15%");
         exerciseGrid.getColumnByKey("repetitionsQuantity").setWidth("15%");
-        exerciseGrid.addColumn(TemplateRenderer.<ExerciseWithId>of("<div style='white-space: normal'>[[item.description]]</div>")
-                .withProperty("description", ExerciseWithId::getDescription))
+        exerciseGrid.addColumn(TemplateRenderer.<ExerciseDto>of("<div style='white-space: normal'>[[item.description]]</div>")
+                .withProperty("description", ExerciseDto::getDescription))
                 .setHeader("Description")
                 .setFlexGrow(50);
         exerciseGrid.setItems(planService.getExercisesByPlanId(plan.getId()));
         return exerciseGrid;
     }
 
-    private Grid<MealWithId> getMealGrid() {
-        Grid<MealWithId> mealGrid = new Grid<>(MealWithId.class);
+    private Grid<MealDto> getMealGrid() {
+        Grid<MealDto> mealGrid = new Grid<>(MealDto.class);
 
         mealGrid.setColumns("name");
         mealGrid.getColumnByKey("name").setWidth("20%");
-        mealGrid.addColumn(TemplateRenderer.<MealWithId>of("<div style='white-space: normal'>[[item.cookInstruction]]</div>")
-                        .withProperty("cookInstruction", MealWithId::getCookInstruction))
+        mealGrid.addColumn(TemplateRenderer.<MealDto>of("<div style='white-space: normal'>[[item.cookInstruction]]</div>")
+                        .withProperty("cookInstruction", MealDto::getCookInstruction))
                 .setHeader("Cook Instruction")
                 .setFlexGrow(80);
         mealGrid.setItems(planService.getMealsByPlanId(plan.getId()));

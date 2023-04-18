@@ -1,4 +1,4 @@
-package com.gymguru.frontend.domain.dto;
+package com.gymguru.frontend.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,13 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserDto {
+public class WgerCategory {
     @JsonProperty("id")
     private Long id;
-    @JsonProperty("firstName")
-    private String firstName;
-    @JsonProperty("lastName")
-    private String lastName;
-    @JsonProperty("credentialId")
-    private Long credentialId;
+    @JsonProperty("name")
+    private String name;
 }

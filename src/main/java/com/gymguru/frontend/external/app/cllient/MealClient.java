@@ -1,6 +1,6 @@
 package com.gymguru.frontend.external.app.cllient;
 
-import com.gymguru.frontend.domain.dto.MealWithId;
+import com.gymguru.frontend.domain.dto.MealDto;
 import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -20,22 +20,22 @@ public class MealClient {
     private final RestTemplate restTemplate;
     private final BackendClientConfiguration backendClientConfiguration;
 
-    public List<MealWithId> getMealsByPlanId(Long planId) throws HttpClientErrorException {
+    public List<MealDto> getMealsByPlanId(Long planId) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getMeal() + "/plan/" + planId)
                 .build()
                 .encode()
                 .toUri();
 
         return List.of(Objects.requireNonNull(restTemplate.exchange
-                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), MealWithId[].class).getBody()));
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), MealDto[].class).getBody()));
     }
 
-    public HttpStatus updateMeal(MealWithId mealWithId) throws HttpClientErrorException {
+    public HttpStatus updateMeal(MealDto mealDto) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getMeal())
                 .build()
                 .encode()
                 .toUri();
 
-        return restTemplate.exchange(url, HttpMethod.PUT, backendClientConfiguration.getAuthorizationEntity(mealWithId), Void.class).getStatusCode();
+        return restTemplate.exchange(url, HttpMethod.PUT, backendClientConfiguration.getAuthorizationEntity(mealDto), Void.class).getStatusCode();
     }
 }

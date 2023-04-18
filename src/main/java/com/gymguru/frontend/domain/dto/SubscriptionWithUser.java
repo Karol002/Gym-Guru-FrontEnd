@@ -1,7 +1,7 @@
 package com.gymguru.frontend.domain.dto;
 
 
-import com.gymguru.frontend.domain.SubscriptionDto;
+import com.gymguru.frontend.domain.Subscription;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,11 +12,11 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @AllArgsConstructor
-public class SubscriptionWithUserDto extends SubscriptionDto {
+public class SubscriptionWithUser extends Subscription {
     private String userFirstName;
     private String userLastName;
 
-    public SubscriptionWithUserDto(BigDecimal price, LocalDate startDate, LocalDate endDate, Long userId, Long trainerId, String userFirstName, String userLastName) {
+    public SubscriptionWithUser(BigDecimal price, LocalDate startDate, LocalDate endDate, Long userId, Long trainerId, String userFirstName, String userLastName) {
         super(price, startDate, endDate, userId, trainerId);
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;

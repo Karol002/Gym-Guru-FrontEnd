@@ -1,6 +1,6 @@
 package com.gymguru.frontend.external.app.cllient;
 
-import com.gymguru.frontend.domain.dto.ExerciseWithId;
+import com.gymguru.frontend.domain.dto.ExerciseDto;
 import com.gymguru.frontend.external.app.config.BackendClientConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -20,18 +20,18 @@ public class ExerciseClient {
     private final RestTemplate restTemplate;
     private final BackendClientConfiguration backendClientConfiguration;
 
-    public List<ExerciseWithId> getExercisesByPlanId(Long planId) throws HttpClientErrorException {
+    public List<ExerciseDto> getExercisesByPlanId(Long planId) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getExercise() + "/plan/" + planId)
                 .build()
                 .encode()
                 .toUri();
 
         return List.of(Objects.requireNonNull(restTemplate.exchange
-                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), ExerciseWithId[].class).getBody()));
+                (url, HttpMethod.GET, backendClientConfiguration.getAuthorizationEntity(), ExerciseDto[].class).getBody()));
 
     }
 
-    public HttpStatus updateExercise(ExerciseWithId exercise) throws HttpClientErrorException {
+    public HttpStatus updateExercise(ExerciseDto exercise) throws HttpClientErrorException {
         URI url = UriComponentsBuilder.fromHttpUrl(backendClientConfiguration.getEndpoint() + backendClientConfiguration.getExercise())
                 .build()
                 .encode()

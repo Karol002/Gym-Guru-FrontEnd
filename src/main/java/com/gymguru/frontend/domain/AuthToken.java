@@ -2,6 +2,7 @@ package com.gymguru.frontend.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.gymguru.frontend.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +14,8 @@ import lombok.NoArgsConstructor;
 public class AuthToken {
     @JsonProperty("token")
     private String token;
-
     @JsonProperty("role")
     private Role role;
-
     @JsonProperty("userId")
     private Long userId;
 }

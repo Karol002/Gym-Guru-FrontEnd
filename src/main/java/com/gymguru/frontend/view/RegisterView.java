@@ -1,7 +1,7 @@
 package com.gymguru.frontend.view;
 
-import com.gymguru.frontend.domain.CredentialType;
-import com.gymguru.frontend.domain.Specialization;
+import com.gymguru.frontend.domain.enums.CredentialType;
+import com.gymguru.frontend.domain.enums.Specialization;
 import com.gymguru.frontend.service.TrainerService;
 import com.gymguru.frontend.service.UserService;
 import com.vaadin.flow.component.UI;

@@ -1,7 +1,7 @@
 package com.gymguru.frontend.view;
 
 
-import com.gymguru.frontend.domain.dto.SessionMemoryDto;
+import com.gymguru.frontend.domain.SessionMemory;
 import com.gymguru.frontend.service.AuthService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -79,7 +79,7 @@ public class ChangePaasswordView extends VerticalLayout {
 
         loginButton.addClickListener(event -> {
             if (validateData()) {
-                if (authService.changePassword(VaadinSession.getCurrent().getAttribute(SessionMemoryDto.class).getEmail(),
+                if (authService.changePassword(VaadinSession.getCurrent().getAttribute(SessionMemory.class).getEmail(),
                         oldPassword.getValue(), newPassword.getValue())) {
                     Notification.show("Successful");
                     UI.getCurrent().getPage().setLocation("/gymguru");

@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SubscriptionDto {
+public class Subscription {
     @JsonProperty("price")
     private BigDecimal price;
     @JsonProperty("startDate")

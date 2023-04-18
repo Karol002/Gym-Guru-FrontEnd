@@ -3,8 +3,8 @@ package com.gymguru.frontend.service;
 import com.gymguru.frontend.domain.Exercise;
 import com.gymguru.frontend.domain.Meal;
 import com.gymguru.frontend.domain.Plan;
-import com.gymguru.frontend.domain.dto.ExerciseWithId;
-import com.gymguru.frontend.domain.dto.MealWithId;
+import com.gymguru.frontend.domain.dto.ExerciseDto;
+import com.gymguru.frontend.domain.dto.MealDto;
 import com.gymguru.frontend.domain.dto.PlanDto;
 import com.gymguru.frontend.external.app.cllient.ExerciseClient;
 import com.gymguru.frontend.external.app.cllient.MealClient;
@@ -38,7 +38,7 @@ public class PlanService {
 
     public boolean createPlan(String dietDescription, String exerciseDescription, Long userId, Long trainerId, List<Exercise> exerciseDtos, List<Meal> mealDtos) {
         try {
-            Plan plan = new Plan(0L, dietDescription, exerciseDescription, userId, trainerId, exerciseDtos, mealDtos);
+            Plan plan = new Plan(dietDescription, exerciseDescription, userId, trainerId, exerciseDtos, mealDtos);
             return planClient.createPlan(plan).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
@@ -46,7 +46,7 @@ public class PlanService {
         }
     }
 
-    public Set<ExerciseWithId> getExercisesByPlanId(Long planId) {
+    public Set<ExerciseDto> getExercisesByPlanId(Long planId) {
         try {
             return new HashSet<>(exerciseClient.getExercisesByPlanId(planId));
         } catch (HttpClientErrorException exception) {
@@ -55,7 +55,7 @@ public class PlanService {
         }
     }
 
-    public Set<MealWithId> getMealsByPlanId(Long planId) {
+    public Set<MealDto> getMealsByPlanId(Long planId) {
         try {
             return new HashSet<>(mealClient.getMealsByPlanId(planId));
         } catch (HttpClientErrorException exception) {
@@ -64,7 +64,7 @@ public class PlanService {
         }
     }
 
-    public boolean updateExercise(ExerciseWithId exercise) {
+    public boolean updateExercise(ExerciseDto exercise) {
         try {
             return exerciseClient.updateExercise(exercise).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
@@ -73,9 +73,9 @@ public class PlanService {
         }
     }
 
-    public boolean updateMeal(MealWithId mealWithId) {
+    public boolean updateMeal(MealDto mealDto) {
         try {
-            return mealClient.updateMeal(mealWithId).is2xxSuccessful();
+            return mealClient.updateMeal(mealDto).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
             logger.warn(exception.getMessage());
             return false;
