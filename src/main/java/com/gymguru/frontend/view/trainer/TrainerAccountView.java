@@ -1,7 +1,7 @@
 package com.gymguru.frontend.view.trainer;
 
-import com.gymguru.frontend.domain.SessionMemory;
 import com.gymguru.frontend.domain.edit.EditTrainer;
+import com.gymguru.frontend.domain.SessionMemory;
 import com.gymguru.frontend.service.TrainerService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;

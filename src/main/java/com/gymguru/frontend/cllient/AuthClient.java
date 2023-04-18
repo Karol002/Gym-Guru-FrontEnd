@@ -1,9 +1,9 @@
 package com.gymguru.frontend.cllient;
 
 import com.gymguru.frontend.config.BackendClientConfiguration;
+import com.gymguru.frontend.domain.read.ReadAuthToken;
 import com.gymguru.frontend.domain.Credential;
 import com.gymguru.frontend.domain.PasswordChanger;
-import com.gymguru.frontend.domain.read.ReadAuthToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;

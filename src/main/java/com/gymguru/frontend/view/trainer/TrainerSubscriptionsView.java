@@ -1,8 +1,8 @@
 package com.gymguru.frontend.view.trainer;
 
+import com.gymguru.frontend.domain.enums.SubscriptionStatus;
 import com.gymguru.frontend.domain.SessionMemory;
 import com.gymguru.frontend.domain.SubscriptionWithUser;
-import com.gymguru.frontend.domain.enums.SubscriptionStatus;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;

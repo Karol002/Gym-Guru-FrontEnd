@@ -64,7 +64,9 @@ public class PlanService {
         }
     }
 
-    public boolean updateExercise(EditExercise exercise) {
+    public boolean updateExercise(Long id, String name, String description, int repetitions, int series, Long planId) {
+        EditExercise exercise = new EditExercise(id, name, description, repetitions, series, planId);
+
         try {
             return exerciseClient.updateExercise(exercise).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
@@ -73,7 +75,9 @@ public class PlanService {
         }
     }
 
-    public boolean updateMeal(EditMeal editMeal) {
+    public boolean updateMeal(Long id, String name, String cookInstruction, Long planId) {
+        EditMeal editMeal = new EditMeal(id, name, cookInstruction, planId);
+
         try {
             return mealClient.updateMeal(editMeal).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
@@ -82,7 +86,9 @@ public class PlanService {
         }
     }
 
-    public boolean updatePlan(EditPlan editPlan) {
+    public boolean updatePlan(Long id, String dietDescription, String planDescription, Long userId, Long trainerId) {
+        EditPlan editPlan = new EditPlan(id, dietDescription, planDescription, userId, trainerId);
+
         try {
             return planClient.updatePlan(editPlan).is2xxSuccessful();
         } catch (HttpClientErrorException exception) {

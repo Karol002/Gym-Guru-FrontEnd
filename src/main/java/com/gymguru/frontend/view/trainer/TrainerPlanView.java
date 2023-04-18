@@ -1,13 +1,13 @@
 package com.gymguru.frontend.view.trainer;
 
-import com.gymguru.frontend.domain.SessionMemory;
-import com.gymguru.frontend.domain.SubscriptionWithUser;
-import com.gymguru.frontend.domain.edit.EditUser;
-import com.gymguru.frontend.domain.read.ReadEdamamMeal;
-import com.gymguru.frontend.domain.read.ReadWgerCategory;
-import com.gymguru.frontend.domain.read.ReadWgerExercise;
 import com.gymguru.frontend.domain.save.SaveExercise;
 import com.gymguru.frontend.domain.save.SaveMeal;
+import com.gymguru.frontend.domain.read.ReadEdamamMeal;
+import com.gymguru.frontend.domain.edit.EditUser;
+import com.gymguru.frontend.domain.read.ReadWgerCategory;
+import com.gymguru.frontend.domain.read.ReadWgerExercise;
+import com.gymguru.frontend.domain.SessionMemory;
+import com.gymguru.frontend.domain.SubscriptionWithUser;
 import com.gymguru.frontend.service.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;

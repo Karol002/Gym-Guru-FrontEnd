@@ -1,9 +1,9 @@
 package com.gymguru.frontend.view.user;
 
 
-import com.gymguru.frontend.domain.SessionMemory;
 import com.gymguru.frontend.domain.edit.EditSubscription;
 import com.gymguru.frontend.domain.edit.EditUser;
+import com.gymguru.frontend.domain.SessionMemory;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.gymguru.frontend.service.UserService;
 import com.vaadin.flow.component.button.Button;

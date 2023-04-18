@@ -2,9 +2,9 @@ package com.gymguru.frontend.service;
 
 import com.gymguru.frontend.cllient.SubscriptionClient;
 import com.gymguru.frontend.cllient.UserClient;
-import com.gymguru.frontend.domain.SubscriptionWithUser;
 import com.gymguru.frontend.domain.edit.EditSubscription;
 import com.gymguru.frontend.domain.edit.EditUser;
+import com.gymguru.frontend.domain.SubscriptionWithUser;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

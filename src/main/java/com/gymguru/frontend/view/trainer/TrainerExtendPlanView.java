@@ -1,10 +1,10 @@
 package com.gymguru.frontend.view.trainer;
 
-import com.gymguru.frontend.domain.SessionMemory;
-import com.gymguru.frontend.domain.SubscriptionWithUser;
 import com.gymguru.frontend.domain.edit.EditExercise;
 import com.gymguru.frontend.domain.edit.EditMeal;
 import com.gymguru.frontend.domain.edit.EditPlan;
+import com.gymguru.frontend.domain.SessionMemory;
+import com.gymguru.frontend.domain.SubscriptionWithUser;
 import com.gymguru.frontend.service.PlanService;
 import com.gymguru.frontend.service.SubscriptionService;
 import com.vaadin.flow.component.button.Button;
@@ -117,9 +117,8 @@ public class TrainerExtendPlanView extends VerticalLayout {
                     && seriesField.getValue() <= seriesField.getMax()
                     && !descriptionArea.isEmpty() && !exerciseNameField.isEmpty()) {
 
-                if (planService.updateExercise(new EditExercise(
-                        exercise.getId(), exerciseNameField.getValue(), descriptionArea.getValue(),
-                        repetitionsField.getValue(), seriesField.getValue(), editPlan.getId()))) {
+                if (planService.updateExercise(exercise.getId(), exerciseNameField.getValue(), descriptionArea.getValue(),
+                        repetitionsField.getValue(), seriesField.getValue(), editPlan.getId())) {
                     Notification.show("Successful update exercise");
                 } else Notification.show("Error update exercise");
 
@@ -175,8 +174,8 @@ public class TrainerExtendPlanView extends VerticalLayout {
 
         Button confirmButton = new Button("Confirm", event1 -> {
             if (!cookInstructionArea.isEmpty() && !mealNameField.isEmpty()) {
-                if (planService.updateMeal(new EditMeal(
-                        editMeal.getId(), mealNameField.getValue(), cookInstructionArea.getValue(), editPlan.getId()))) {
+                if (planService.updateMeal(editMeal.getId(), mealNameField.getValue(),
+                        cookInstructionArea.getValue(), editPlan.getId())) {
                     Notification.show("Successful update diet");
                 } else  Notification.show("Error update diet");
 
@@ -304,7 +303,7 @@ public class TrainerExtendPlanView extends VerticalLayout {
         saveButton.setVisible(false);
 
         saveButton.addClickListener(event -> {
-            if (planService.updatePlan(new EditPlan(editPlan.getId(), dietDescription, planDescription.getValue(), editPlan.getUserId(), editPlan.getTrainerId()))) {
+            if (planService.updatePlan(editPlan.getId(), dietDescription, planDescription.getValue(), editPlan.getUserId(), editPlan.getTrainerId())) {
                 Notification.show("Successful update training instructions");
             } else Notification.show("Error update training instructions");
             getSinglePlan(editPlan.getUserId());
@@ -325,7 +324,7 @@ public class TrainerExtendPlanView extends VerticalLayout {
         saveButton.setVisible(false);
 
         saveButton.addClickListener(event -> {
-            if (planService.updatePlan(new EditPlan(editPlan.getId(), dietDescription.getValue(), planDescription, editPlan.getUserId(), editPlan.getTrainerId()))) {
+            if (planService.updatePlan(editPlan.getId(), dietDescription.getValue(), planDescription, editPlan.getUserId(), editPlan.getTrainerId())) {
                 Notification.show("Successful update cook instruction");
             } else Notification.show("Error update cook instruction");
             getSinglePlan(editPlan.getUserId());
