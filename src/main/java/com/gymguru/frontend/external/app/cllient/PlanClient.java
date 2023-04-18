@@ -41,7 +41,9 @@ public class PlanClient {
                 .build()
                 .encode()
                 .toUri();
-
+        for (int i = 0; i < plan.getSaveExerciseDtos().size(); i++) {
+            System.out.println(plan.getSaveExerciseDtos().get(i).getDescription().length());
+        }
         return restTemplate.postForEntity(url, backendClientConfiguration.getAuthorizationEntity(plan), Void.class).getStatusCode();
     }
 
