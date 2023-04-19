@@ -73,7 +73,7 @@ public class TrainerView extends AppLayout {
                 new Tab("Create a plan"),
                 new Tab("Edit plans"),
                 new Tab("My Subscribers"),
-                new Tab("My Data"),
+                new Tab("Account Information"),
                 new Tab("Change password"),
                 new Tab("Log out")
         );
@@ -112,7 +112,7 @@ public class TrainerView extends AppLayout {
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
-            if (selectedTab.getLabel().equals("My Data")) {
+            if (selectedTab.getLabel().equals("Account Information")) {
                 setContent(new TrainerAccountView(trainerService, VaadinSession.getCurrent().getAttribute(SessionMemory.class)));
             }
         });

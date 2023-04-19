@@ -51,8 +51,8 @@ public class AuthService {
         SessionMemory sessionMemory = VaadinSession.getCurrent().getAttribute(SessionMemory.class);
         if (sessionMemory == null || sessionMemory.getRole() != role) {
             clearSession();
-            return true;
-        } else return false;
+            return false;
+        } else return true;
     }
 
     public void clearSession() {
