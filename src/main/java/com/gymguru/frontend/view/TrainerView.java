@@ -1,6 +1,7 @@
 package com.gymguru.frontend.view;
 
 import com.gymguru.frontend.domain.authorization.SessionMemory;
+import com.gymguru.frontend.domain.enums.Role;
 import com.gymguru.frontend.service.*;
 import com.gymguru.frontend.view.trainer.TrainerAccountView;
 import com.gymguru.frontend.view.trainer.TrainerExtendPlanView;
@@ -29,7 +30,7 @@ public class TrainerView extends AppLayout {
     private final UserService userService;
     private final PlanService planService;
     private final WgerService wgerService;
-    private final Tabs tabs;
+    private Tabs tabs;
 
     @Autowired
     public TrainerView(OpenAiService openAiService, TrainerService trainerService, EdamamService edamamService, AuthService authService, SubscriptionService subscriptionService, UserService userService, PlanService planService, WgerService wgerService) {
@@ -42,14 +43,17 @@ public class TrainerView extends AppLayout {
         this.planService = planService;
         this.wgerService = wgerService;
 
-        H1 title = new H1("Welcome in GYM-GURU trainer Panel");
-        title.setWidthFull();
-        title.getStyle().set("text-align", "center"); // wyc
-        setPrimarySection(AppLayout.Section.DRAWER);
-        tabs = getTabs();
+        if (authService.checkAuth(Role.ROLE_TRAINER)) {
 
-        addToNavbar(title);
-        addToDrawer(getVerticalLayout());
+            H1 title = new H1("Welcome in GYM-GURU trainer Panel");
+            title.setWidthFull();
+            title.getStyle().set("text-align", "center"); // wyc
+            setPrimarySection(AppLayout.Section.DRAWER);
+            tabs = getTabs();
+
+            addToNavbar(title);
+            addToDrawer(getVerticalLayout());
+        }
     }
 
     private VerticalLayout getVerticalLayout() {
@@ -124,7 +128,7 @@ public class TrainerView extends AppLayout {
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("Log out")) {
-                authService.logOut();
+                authService.clearSession();
             }
         });
 

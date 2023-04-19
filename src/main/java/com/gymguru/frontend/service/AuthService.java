@@ -5,6 +5,7 @@ import com.gymguru.frontend.domain.authorization.AuthToken;
 import com.gymguru.frontend.domain.authorization.Credential;
 import com.gymguru.frontend.domain.authorization.PasswordChanger;
 import com.gymguru.frontend.domain.authorization.SessionMemory;
+import com.gymguru.frontend.domain.enums.Role;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinSession;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,15 @@ public class AuthService {
         }
     }
 
-    public void logOut() {
+    public boolean checkAuth(Role role) {
+        SessionMemory sessionMemory = VaadinSession.getCurrent().getAttribute(SessionMemory.class);
+        if (sessionMemory == null || sessionMemory.getRole() != role) {
+            clearSession();
+            return true;
+        } else return false;
+    }
+
+    public void clearSession() {
         UI.getCurrent().getPage().setLocation("/gymguru");
         VaadinSession.getCurrent().close();
     }

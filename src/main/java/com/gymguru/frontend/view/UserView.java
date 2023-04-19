@@ -1,6 +1,7 @@
 package com.gymguru.frontend.view;
 
 import com.gymguru.frontend.domain.authorization.SessionMemory;
+import com.gymguru.frontend.domain.enums.Role;
 import com.gymguru.frontend.service.*;
 import com.gymguru.frontend.view.user.UserAccountView;
 import com.gymguru.frontend.view.user.UserBuyView;
@@ -26,7 +27,7 @@ public class UserView extends AppLayout {
     private final AuthService authService;
     private final SubscriptionService subscriptionService;
     private final PlanService planService;
-    private final Tabs tabs;
+    private Tabs tabs;
 
     @Autowired
     public UserView(OpenAiService openAiService, TrainerService trainerService, UserService userService, AuthService authService, SubscriptionService subscriptionService, PlanService planService) {
@@ -37,14 +38,17 @@ public class UserView extends AppLayout {
         this.subscriptionService = subscriptionService;
         this.planService = planService;
 
-        H1 title = new H1("Welcome in GYM-GURU user Panel");
-        title.setWidthFull();
-        title.getStyle().set("text-align", "center");
-        setPrimarySection(Section.DRAWER);
-        tabs = getTabs();
+        if (authService.checkAuth(Role.ROLE_USER)) {
 
-        addToNavbar(title);
-        addToDrawer(getVerticalLayout());
+            H1 title = new H1("Welcome in GYM-GURU user Panel");
+            title.setWidthFull();
+            title.getStyle().set("text-align", "center");
+            setPrimarySection(Section.DRAWER);
+            tabs = getTabs();
+
+            addToNavbar(title);
+            addToDrawer(getVerticalLayout());
+        }
     }
 
     private VerticalLayout getVerticalLayout() {
@@ -111,7 +115,7 @@ public class UserView extends AppLayout {
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = event.getSelectedTab();
             if (selectedTab.getLabel().equals("Log out")) {
-                authService.logOut();
+                authService.clearSession();
             }
         });
 
