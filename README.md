@@ -1,4 +1,4 @@
-# Gym-Guru Frontedn
+# Gym-Guru Frontend
 Below, after expanding the collapsed section you can find a Project content:
 <details><summary>Project content</summary>
 <p>

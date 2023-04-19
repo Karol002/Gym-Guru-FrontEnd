@@ -108,6 +108,7 @@ public class TrainerPlanView extends VerticalLayout {
     private void selectUser(ReadSubscriptionWithUserSave subscriptionWithUser) {
         editUser = userService.getUserById(subscriptionWithUser.getUserId());
         mainContainer.removeAll();
+        mealDtoGrid.setItems(edmamService.getMeals("chicken"));
         mainContainer.add(getMealContainer(mealDtoGrid, exerciseButton, findMealLayout));
     }
 
@@ -227,7 +228,6 @@ public class TrainerPlanView extends VerticalLayout {
                 .setFlexGrow(60);
 
         mealDtoGrid.asSingleSelect().addValueChangeListener(event -> selectMeal(mealDtoGrid.asSingleSelect().getValue()));
-        mealDtoGrid.setItems(edmamService.getMeals("chicken"));
         return mealDtoGrid;
     }
 
