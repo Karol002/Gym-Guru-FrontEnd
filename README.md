@@ -9,7 +9,7 @@ The GYM-GURU application allows users to easily find a personal trainer and orde
 </details>
 
 # START-UP MANUAL
-Below, after expanding the collapsed section you can find a Project start up manual:
+Below, after expanding the collapsed section you can find instructions for running the project:
 
 <details><summary>Start up manual</summary>
 <p>
